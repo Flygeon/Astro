@@ -41,6 +41,8 @@ const hasCover = image !== undefined && image !== null && image !== "";
 const coverWidth = "28%";
 
 const { remarkPluginFrontmatter } = await entry.render();
+
+const postPath = url.replace(/\/$/, "");
 ---
 <div class:list={["card-base flex flex-col-reverse md:flex-col w-full rounded-[var(--radius-large)] overflow-hidden relative", className]} style={style}>
     <div class:list={["pl-6 md:pl-9 pr-6 md:pr-2 pt-6 md:pt-7 pb-6 relative", {"w-full md:w-[calc(100%_-_52px_-_12px)]": !hasCover, "w-full md:w-[calc(100%_-_var(--coverWidth)_-_12px)]": hasCover}]}>
@@ -72,6 +74,11 @@ const { remarkPluginFrontmatter } = await entry.render();
             <div>|</div>
             <div>
                 {remarkPluginFrontmatter.minutes} {" " + i18n(remarkPluginFrontmatter.minutes === 1 ? I18nKey.minuteCount : I18nKey.minutesCount)}
+            </div>
+            <div>|</div>
+            <div class="flex items-center gap-1 post-views" data-path={postPath}>
+                <Icon name="material-symbols:visibility-outline-rounded" class="text-base"></Icon>
+                <span class="post-views-count">-</span>
             </div>
         </div>
 
@@ -108,3 +115,100 @@ const { remarkPluginFrontmatter } = await entry.render();
 
 <style define:vars={{coverWidth}}>
 </style>
+
+<script>
+const UMAMI_POST_CONFIG = {
+    apiUrl: 'https://umami.flygeon.eu.org/api',
+    shareId: 'OSwi3PpuZgZ2Io3a',
+};
+
+let __UMAMI_POST_INTERNAL = {
+    websiteId: '',
+    shareToken: '',
+    isReady: false
+};
+
+async function initUmamiPostConfig() {
+    try {
+        const res = await fetch(`${UMAMI_POST_CONFIG.apiUrl}/share/${UMAMI_POST_CONFIG.shareId}`);
+        const data = await res.json();
+
+        __UMAMI_POST_INTERNAL = {
+            websiteId: data.websiteId,
+            shareToken: data.token,
+            isReady: true
+        };
+    } catch (e) {
+        console.error('Umami Post Config Init Failed:', e);
+    }
+}
+
+function formatNumber(num: number): string {
+    if (num >= 1000000) {
+        return (num / 1000000).toFixed(1) + 'M';
+    } else if (num >= 1000) {
+        return (num / 1000).toFixed(1) + 'K';
+    }
+    return Math.round(num).toString();
+}
+
+async function fetchPostStats(path: string) {
+    if (!__UMAMI_POST_INTERNAL.isReady) {
+        await initUmamiPostConfig();
+    }
+
+    if (!__UMAMI_POST_INTERNAL.isReady) {
+        return null;
+    }
+
+    try {
+        const endAt = Date.now();
+        const startAt = 0;
+        // Umami v3 API: use path=eq. prefix for exact match
+        const apiUrl = `${UMAMI_POST_CONFIG.apiUrl}/websites/${__UMAMI_POST_INTERNAL.websiteId}/stats?startAt=${startAt}&endAt=${endAt}&unit=hour&timezone=Asia%2FShanghai&path=eq.${encodeURIComponent(path + '/')}`;
+
+        const response = await fetch(apiUrl, {
+            headers: {
+                'x-umami-share-token': __UMAMI_POST_INTERNAL.shareToken
+            }
+        });
+
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const data = await response.json();
+
+        return {
+            pageviews: data.pageviews || 0,
+            visits: data.visits || 0,
+        };
+    } catch (error) {
+        console.error('Umami Post Fetch Failed:', error);
+        return null;
+    }
+}
+
+async function initPostViews() {
+    const viewElements = document.querySelectorAll('.post-views');
+    if (viewElements.length === 0) return;
+
+    for (const el of viewElements) {
+        const path = el.getAttribute('data-path');
+        const countEl = el.querySelector('.post-views-count');
+        if (!path || !countEl) continue;
+
+        const stats = await fetchPostStats(path);
+        if (stats) {
+            countEl.textContent = formatNumber(stats.pageviews);
+        } else {
+            countEl.textContent = '-';
+        }
+    }
+}
+
+initPostViews();
+
+if (window.swup) {
+    window.swup.hooks.on('page:view', () => {
+        initPostViews();
+    });
+}
+</script>

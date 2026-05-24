@@ -10,18 +10,14 @@ const { class: className, style } = Astro.props;
 
 <WidgetLayout name="统计" id="umami-stats" class:list={[className, "cursor-pointer transition-opacity active:scale-95"]} {style}>
     <a id="umami-link" target="_blank" rel="noopener noreferrer" class="block">
-        <div class="text-center py-2">
-            <div class="text-3xl font-bold text-neutral-900 dark:text-neutral-100" id="total-pageviews">-</div>
-            <div class="text-sm text-neutral-500 dark:text-neutral-400">总浏览量</div>
-        </div>
-        <div class="grid grid-cols-2 divide-x divide-neutral-200 dark:divide-neutral-700 text-center pt-2">
+        <div class="grid grid-cols-2 divide-x divide-neutral-200 dark:divide-neutral-700 text-center py-2">
             <div class="px-2">
-                <div class="text-xl font-bold text-neutral-900 dark:text-neutral-100" id="total-visits">-</div>
-                <div class="text-sm text-neutral-500 dark:text-neutral-400">访问数</div>
+                <div class="text-2xl font-bold text-neutral-900 dark:text-neutral-100" id="total-pageviews">-</div>
+                <div class="text-sm text-neutral-500 dark:text-neutral-400">总浏览量</div>
             </div>
             <div class="px-2">
-                <div class="text-xl font-bold text-neutral-900 dark:text-neutral-100" id="total-visitors">-</div>
-                <div class="text-sm text-neutral-500 dark:text-neutral-400">游客数</div>
+                <div class="text-2xl font-bold text-neutral-900 dark:text-neutral-100" id="total-visits">-</div>
+                <div class="text-sm text-neutral-500 dark:text-neutral-400">访问数</div>
             </div>
         </div>
     </a>
@@ -29,44 +25,34 @@ const { class: className, style } = Astro.props;
 
 <script>
 const UMAMI_CONFIG = {
-    shareUrl: 'https://umami.flygeon.eu.org/share/OSwi3PpuZgZ2Io3a',
+    apiUrl: 'https://umami.flygeon.eu.org/api',
+    shareId: 'OSwi3PpuZgZ2Io3a',
 };
 
 let __UMAMI_INTERNAL = {
-    baseUrl: '',
     websiteId: '',
     shareToken: '',
-    shareId: '',
     isReady: false
 };
 
 const FALLBACK_STATS = {
     pageviews: 1000,
     visits: 1000,
-    visitors: 1000,
 };
 
 async function initUmamiConfig() {
     try {
-        const sharePath = UMAMI_CONFIG.shareUrl.split('/share/')[1];
-        if (!sharePath) throw new Error('Invalid Umami Share URL');
-
-        const region = UMAMI_CONFIG.shareUrl.includes('/analytics/eu/') ? 'eu' : 'us';
-        const apiBase = `https://umami.flygeon.eu.org/api`;
-
-        const res = await fetch(`${apiBase}/share/${sharePath}`);
+        const res = await fetch(`${UMAMI_CONFIG.apiUrl}/share/${UMAMI_CONFIG.shareId}`);
         const data = await res.json();
 
         __UMAMI_INTERNAL = {
-            baseUrl: apiBase,
             websiteId: data.websiteId,
             shareToken: data.token,
-            shareId: data.shareId,
             isReady: true
         };
 
         const link = document.getElementById('umami-link');
-        if (link) link.setAttribute('href', UMAMI_CONFIG.shareUrl);
+        if (link) link.setAttribute('href', `https://umami.flygeon.eu.org/share/${UMAMI_CONFIG.shareId}`);
 
     } catch (e) {
         console.error('Umami Config Init Failed:', e);
@@ -82,10 +68,9 @@ function formatNumber(num: number): string {
     return Math.round(num).toString();
 }
 
-function setStats(values: { pageviews: number; visits: number; visitors: number }) {
+function setStats(values: { pageviews: number; visits: number }) {
     const pageviewsElement = document.getElementById('total-pageviews');
     const visitsElement = document.getElementById('total-visits');
-    const visitorsElement = document.getElementById('total-visitors');
 
     const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
     const animHandles = new Map<HTMLElement, number>();
@@ -116,7 +101,6 @@ function setStats(values: { pageviews: number; visits: number; visitors: number 
 
     animateStat(pageviewsElement, values.pageviews);
     animateStat(visitsElement, values.visits);
-    animateStat(visitorsElement, values.visitors);
 }
 
 async function fetchUmamiStats() {
@@ -132,23 +116,20 @@ async function fetchUmamiStats() {
     try {
         const endAt = Date.now();
         const startAt = 0;
-        const url = `${__UMAMI_INTERNAL.baseUrl}/websites/${__UMAMI_INTERNAL.websiteId}/stats?startAt=${startAt}&endAt=${endAt}&unit=hour&timezone=Asia%2FShanghai`;
+        const url = `${UMAMI_CONFIG.apiUrl}/websites/${__UMAMI_INTERNAL.websiteId}/stats?startAt=${startAt}&endAt=${endAt}&unit=hour&timezone=Asia%2FShanghai`;
 
         const response = await fetch(url, {
             headers: {
-                'x-umami-share-context': '1',
                 'x-umami-share-token': __UMAMI_INTERNAL.shareToken
             }
         });
 
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const data = await response.json();
-        const getValue = (field: any) => (typeof field === 'object' ? field?.value : field) || 0;
 
         setStats({
-            pageviews: getValue(data.pageviews),
-            visits: getValue(data.visits),
-            visitors: getValue(data.visitors),
+            pageviews: data.pageviews || 0,
+            visits: data.visits || 0,
         });
 
     } catch (error) {
