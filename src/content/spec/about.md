@@ -1,7 +1,11 @@
-# About
+# 关于博客
 This is the demo site for [Fuwari](https://github.com/saicaca/fuwari).
 
 ::github{repo="saicaca/fuwari"}
+
+我的博客仓库 [Astro](https://github.com/Flygeon/Astro).
+
+::github{repo="Flygeon/Astro"}
 
 > ### Sources of images used in this site
 > - [Unsplash](https://unsplash.com/)
