@@ -4,6 +4,7 @@ import Categories from "./Categories.astro";
 import Profile from "./Profile.astro";
 import RouteSwitch from "./RouteSwitch.astro";
 import Tag from "./Tags.astro";
+import UmamiStats from "./UmamiStats.astro";
 
 interface Props {
 	class?: string;
@@ -18,7 +19,7 @@ const className = Astro.props.class;
     </div>
     <div id="sidebar-sticky" class="transition-all duration-700 flex flex-col w-full gap-4 top-4 sticky top-4">
         <RouteSwitch class="onload-animation" style="animation-delay: 100ms"></RouteSwitch>
+        <UmamiStats class="onload-animation" style="animation-delay: 250ms"></UmamiStats>
         <Categories class="onload-animation" style="animation-delay: 150ms"></Categories>
-        <Tag class="onload-animation" style="animation-delay: 200ms"></Tag>
     </div>
 </div>
