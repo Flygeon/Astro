@@ -1,0 +1,132 @@
+---
+import type { UserSubjectCollection, UserSubjectCollectionResponse, SubjectType } from "@/types/bangumi";
+import MainGridLayout from "../layouts/MainGridLayout.astro";
+import BangumiSection from "../components/bangumi/BangumiSection.astro";
+import I18nKey from "../i18n/i18nKey";
+import { i18n } from "../i18n/translation";
+
+const BANGUMI_USERNAME = "1250652";
+const API_BASE = "https://api.bgm.tv/v0";
+const PAGE_SIZE = 100;
+
+async function fetchAllCollections(subjectType: SubjectType): Promise<UserSubjectCollection[]> {
+  const allItems: UserSubjectCollection[] = [];
+  let offset = 0;
+  let total = 0;
+
+  while (true) {
+    const url = `${API_BASE}/users/${BANGUMI_USERNAME}/collections?subject_type=${subjectType}&limit=${PAGE_SIZE}&offset=${offset}`;
+    const res = await fetch(url, {
+      headers: {
+        "User-Agent": "Flygeon/blog (https://flygeon.eu.org)",
+      },
+    });
+
+    if (!res.ok) {
+      console.error(`Failed to fetch bangumi collections: ${res.status} ${res.statusText}`);
+      break;
+    }
+
+    const data: UserSubjectCollectionResponse = await res.json();
+    allItems.push(...data.data);
+    total = data.total;
+    offset += data.limit;
+
+    if (offset >= total) {
+      break;
+    }
+  }
+
+  return allItems;
+}
+
+const animeItems = await fetchAllCollections(2);
+
+const sections = [
+  { id: "anime", label: "动画", items: animeItems },
+];
+
+let activeSection = sections[0].id;
+---
+
+<MainGridLayout title={i18n(I18nKey.bangumi)} description={i18n(I18nKey.bangumi)}>
+  <div class="flex w-full rounded-[var(--radius-large)] overflow-hidden relative min-h-32">
+    <div class="card-base z-10 px-9 py-6 relative w-full">
+      <div class="mb-6">
+        <div class="flex items-center gap-4 mb-4">
+          <h1 class="text-2xl font-bold">Bangumi 收藏</h1>
+          <a
+            href={`https://bgm.tv/user/${BANGUMI_USERNAME}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-sm text-[var(--primary)] hover:underline"
+          >
+            @{BANGUMI_USERNAME}
+          </a>
+        </div>
+        <p class="text-gray-500 dark:text-gray-400 text-sm">
+          数据来源于 Bangumi，仅展示动画类收藏条目
+        </p>
+      </div>
+
+      <div class="flex gap-2 mb-6 border-b border-gray-200 dark:border-gray-700">
+        {sections.map((section) => (
+          <button
+            class:list={[
+              "px-4 py-2 text-sm font-medium border-b-2 transition-colors duration-200",
+              {
+                "border-[var(--primary)] text-[var(--primary)]": section.id === activeSection,
+                "border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200": section.id !== activeSection,
+              }
+            ]}
+            data-tab={section.id}
+            type="button"
+          >
+            {section.label} ({section.items.length})
+          </button>
+        ))}
+      </div>
+
+      {sections.map((section) => (
+        <BangumiSection
+          sectionId={section.id}
+          items={section.items}
+          isActive={section.id === activeSection}
+        />
+      ))}
+    </div>
+  </div>
+</MainGridLayout>
+
+<script>
+  function initTabs() {
+    const tabs = document.querySelectorAll('[data-tab]');
+    tabs.forEach(tab => {
+      tab.addEventListener('click', function() {
+        const targetId = this.dataset.tab;
+
+        tabs.forEach(t => {
+          t.classList.remove('border-[var(--primary)]', 'text-[var(--primary)]');
+          t.classList.add('border-transparent', 'text-gray-500');
+        });
+
+        this.classList.remove('border-transparent', 'text-gray-500');
+        this.classList.add('border-[var(--primary)]', 'text-[var(--primary)]');
+
+        document.querySelectorAll('[data-section]').forEach(section => {
+          if (section.dataset.section === targetId) {
+            section.classList.remove('hidden');
+          } else {
+            section.classList.add('hidden');
+          }
+        });
+      });
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initTabs);
+  } else {
+    initTabs();
+  }
+</script>

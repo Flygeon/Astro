@@ -1,0 +1,213 @@
+---
+import { Icon } from "astro-icon/components";
+
+interface Props {
+  totalItems: number;
+  itemsPerPage: number;
+  currentPage: number;
+  sectionId: string;
+}
+
+const { totalItems, itemsPerPage, currentPage, sectionId } = Astro.props;
+const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+function generatePageNumbers(current: number, total: number) {
+  const delta = 2;
+  const range = [];
+  const rangeWithDots = [];
+
+  if (total <= 7) {
+    for (let i = 1; i <= total; i++) {
+      range.push(i);
+    }
+    return range;
+  }
+
+  const left = Math.max(2, current - delta);
+  const right = Math.min(total - 1, current + delta);
+
+  rangeWithDots.push(1);
+
+  if (left > 2) {
+    rangeWithDots.push("...");
+  }
+
+  for (let i = left; i <= right; i++) {
+    rangeWithDots.push(i);
+  }
+
+  if (right < total - 1) {
+    rangeWithDots.push("...");
+  }
+
+  if (total > 1) {
+    rangeWithDots.push(total);
+  }
+
+  return rangeWithDots;
+}
+
+const pageNumbers = generatePageNumbers(currentPage, totalPages);
+---
+
+{totalPages > 1 && (
+  <div class="responsive-pagination flex justify-center items-center mt-8" data-pagination-section={sectionId}>
+    <div class="mobile-pagination items-center space-x-2">
+      <button
+        type="button"
+        class="p-1.5 rounded-md bg-gray-100 text-gray-700 hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 transition-colors duration-200"
+        data-page="prev"
+        data-section={sectionId}
+        disabled={currentPage === 1}
+        aria-label="上一页"
+      >
+        <Icon name="material-symbols:chevron-left-rounded" class="text-base" />
+      </button>
+
+      <div class="flex items-center space-x-1">
+        <span class="text-sm text-gray-600 dark:text-gray-400">第</span>
+        <span class="mobile-current-page px-2 py-1 text-sm font-medium bg-blue-500 text-white rounded">{currentPage}</span>
+        <span class="text-sm text-gray-600 dark:text-gray-400">页，共</span>
+        <span class="px-2 py-1 text-sm font-medium bg-gray-100 text-gray-700 rounded dark:bg-gray-700 dark:text-gray-300">{totalPages}</span>
+        <span class="text-sm text-gray-600 dark:text-gray-400">页</span>
+      </div>
+
+      <button
+        type="button"
+        class="p-1.5 rounded-md bg-gray-100 text-gray-700 hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 transition-colors duration-200"
+        data-page="next"
+        data-section={sectionId}
+        disabled={currentPage === totalPages}
+        aria-label="下一页"
+      >
+        <Icon name="material-symbols:chevron-right-rounded" class="text-base" />
+      </button>
+    </div>
+
+    <div class="desktop-pagination hidden md:flex items-center space-x-1 ml-4">
+      {pageNumbers.map((pageNum) =>
+        pageNum === "..." ? (
+          <span class="px-2 text-gray-400">...</span>
+        ) : (
+          <button
+            type="button"
+            class:list={[
+              "min-w-8 h-8 rounded-md text-sm font-medium transition-colors duration-200",
+              {
+                "bg-blue-500 text-white": pageNum === currentPage,
+                "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600": pageNum !== currentPage
+              }
+            ]}
+            data-page={pageNum}
+            data-section={sectionId}
+          >
+            {pageNum}
+          </button>
+        )
+      )}
+    </div>
+  </div>
+)}
+
+<script is:inline define:vars={{ sectionId }}>
+  function initPagination() {
+    const paginationContainer = document.querySelector(`[data-pagination-section="${sectionId}"]`);
+    if (!paginationContainer) return;
+
+    const buttons = paginationContainer.querySelectorAll('[data-page]');
+
+    buttons.forEach(button => {
+      button.addEventListener('click', function() {
+        const page = this.dataset.page;
+        const currentSectionId = this.dataset.section;
+
+        const allItems = document.querySelectorAll(`[data-item-section="${currentSectionId}"]`);
+        const visibleItems = Array.from(allItems).filter(item => !item.classList.contains('hidden'));
+
+        const itemsPerPage = 12;
+        let currentPage = 1;
+
+        if (page === 'prev') {
+          currentPage = Math.max(1, getCurrentPage(currentSectionId) - 1);
+        } else if (page === 'next') {
+          const totalPages = Math.ceil(visibleItems.length / itemsPerPage);
+          currentPage = Math.min(totalPages, getCurrentPage(currentSectionId) + 1);
+        } else {
+          currentPage = parseInt(page);
+        }
+
+        showPage(currentSectionId, currentPage, itemsPerPage);
+        updatePageDisplay(currentSectionId, currentPage);
+      });
+    });
+
+    paginationContainer.addEventListener('updatePagination', function(e) {
+      const visibleCount = e.detail.visibleCount;
+      const itemsPerPage = 12;
+      const totalPages = Math.ceil(visibleCount / itemsPerPage);
+      showPage(currentSectionId, 1, itemsPerPage);
+      updatePageDisplay(currentSectionId, 1);
+    });
+  }
+
+  function getCurrentPage(sectionId) {
+    const container = document.querySelector(`[data-pagination-section="${sectionId}"]`);
+    if (!container) return 1;
+    const currentPageEl = container.querySelector('.mobile-current-page');
+    return currentPageEl ? parseInt(currentPageEl.textContent) : 1;
+  }
+
+  function showPage(sectionId, page, itemsPerPage) {
+    const allItems = document.querySelectorAll(`[data-item-section="${sectionId}"]`);
+    const visibleItems = Array.from(allItems).filter(item => !item.classList.contains('hidden'));
+
+    allItems.forEach(item => {
+      item.style.display = 'none';
+    });
+
+    const start = (page - 1) * itemsPerPage;
+    const end = start + itemsPerPage;
+
+    visibleItems.slice(start, end).forEach((item, index) => {
+      item.style.display = 'block';
+    });
+  }
+
+  function updatePageDisplay(sectionId, page) {
+    const container = document.querySelector(`[data-pagination-section="${sectionId}"]`);
+    if (!container) return;
+
+    const mobileCurrentPage = container.querySelector('.mobile-current-page');
+    if (mobileCurrentPage) {
+      mobileCurrentPage.textContent = page;
+    }
+
+    const desktopButtons = container.querySelectorAll('.desktop-pagination [data-page]');
+    desktopButtons.forEach(btn => {
+      const pageNum = btn.dataset.page;
+      if (parseInt(pageNum) === page) {
+        btn.classList.remove('bg-gray-100', 'text-gray-700', 'hover:bg-gray-200', 'dark:bg-gray-700', 'dark:text-gray-300', 'dark:hover:bg-gray-600');
+        btn.classList.add('bg-blue-500', 'text-white');
+      } else if (pageNum !== '...') {
+        btn.classList.remove('bg-blue-500', 'text-white');
+        btn.classList.add('bg-gray-100', 'text-gray-700', 'hover:bg-gray-200', 'dark:bg-gray-700', 'dark:text-gray-300', 'dark:hover:bg-gray-600');
+      }
+    });
+
+    const prevButton = container.querySelector('[data-page="prev"]');
+    const nextButton = container.querySelector('[data-page="next"]');
+    if (prevButton) prevButton.disabled = page === 1;
+    if (nextButton) {
+      const allItems = document.querySelectorAll(`[data-item-section="${sectionId}"]`);
+      const visibleItems = Array.from(allItems).filter(item => !item.classList.contains('hidden'));
+      const totalPages = Math.ceil(visibleItems.length / 12);
+      nextButton.disabled = page === totalPages;
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initPagination);
+  } else {
+    initPagination();
+  }
+</script>
