@@ -41,9 +41,11 @@ async function fetchAllCollections(subjectType: SubjectType): Promise<UserSubjec
 }
 
 const animeItems = await fetchAllCollections(2);
+const gameItems = await fetchAllCollections(4);
 
 const sections = [
   { id: "anime", label: "动画", items: animeItems },
+  { id: "game", label: "游戏", items: gameItems },
 ];
 
 let activeSection = sections[0].id;
@@ -65,7 +67,7 @@ let activeSection = sections[0].id;
           </a>
         </div>
         <p class="text-gray-500 dark:text-gray-400 text-sm">
-          数据来源于 Bangumi，仅展示动画类收藏条目
+          数据来源于 Bangumi，展示动画和游戏类收藏条目
         </p>
       </div>
 

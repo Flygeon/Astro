@@ -52,7 +52,7 @@ const pageNumbers = generatePageNumbers(currentPage, totalPages);
 
 {totalPages > 1 && (
   <div class="responsive-pagination flex justify-center items-center mt-8" data-pagination-section={sectionId}>
-    <div class="mobile-pagination items-center space-x-2">
+    <div class="mobile-pagination flex items-center space-x-2">
       <button
         type="button"
         class="p-1.5 rounded-md bg-gray-100 text-gray-700 hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 transition-colors duration-200"
@@ -124,7 +124,7 @@ const pageNumbers = generatePageNumbers(currentPage, totalPages);
         const allItems = document.querySelectorAll(`[data-item-section="${currentSectionId}"]`);
         const visibleItems = Array.from(allItems).filter(item => !item.classList.contains('hidden'));
 
-        const itemsPerPage = 12;
+        const itemsPerPage = 6;
         let currentPage = 1;
 
         if (page === 'prev') {
@@ -137,16 +137,20 @@ const pageNumbers = generatePageNumbers(currentPage, totalPages);
         }
 
         showPage(currentSectionId, currentPage, itemsPerPage);
-        updatePageDisplay(currentSectionId, currentPage);
+        updatePageDisplay(currentSectionId, currentPage, visibleItems.length);
       });
     });
 
     paginationContainer.addEventListener('updatePagination', function(e) {
       const visibleCount = e.detail.visibleCount;
-      const itemsPerPage = 12;
+      const itemsPerPage = 6;
       const totalPages = Math.ceil(visibleCount / itemsPerPage);
-      showPage(currentSectionId, 1, itemsPerPage);
-      updatePageDisplay(currentSectionId, 1);
+
+      const allItems = document.querySelectorAll(`[data-item-section="${sectionId}"]`);
+      const visibleItems = Array.from(allItems).filter(item => !item.classList.contains('hidden'));
+
+      showPage(sectionId, 1, itemsPerPage);
+      updatePageDisplay(sectionId, 1, visibleItems.length);
     });
   }
 
@@ -168,27 +172,35 @@ const pageNumbers = generatePageNumbers(currentPage, totalPages);
     const start = (page - 1) * itemsPerPage;
     const end = start + itemsPerPage;
 
-    visibleItems.slice(start, end).forEach((item, index) => {
+    visibleItems.slice(start, end).forEach((item) => {
       item.style.display = 'block';
     });
   }
 
-  function updatePageDisplay(sectionId, page) {
+  function updatePageDisplay(sectionId, page, visibleCount) {
     const container = document.querySelector(`[data-pagination-section="${sectionId}"]`);
     if (!container) return;
+
+    const itemsPerPage = 6;
+    const totalPages = Math.ceil(visibleCount / itemsPerPage);
 
     const mobileCurrentPage = container.querySelector('.mobile-current-page');
     if (mobileCurrentPage) {
       mobileCurrentPage.textContent = page;
     }
 
+    const totalPagesEl = container.querySelector('.mobile-pagination span:nth-child(4)');
+    if (totalPagesEl) {
+      totalPagesEl.textContent = totalPages;
+    }
+
     const desktopButtons = container.querySelectorAll('.desktop-pagination [data-page]');
     desktopButtons.forEach(btn => {
-      const pageNum = btn.dataset.page;
-      if (parseInt(pageNum) === page) {
+      const pageNum = parseInt(btn.dataset.page);
+      if (pageNum === page) {
         btn.classList.remove('bg-gray-100', 'text-gray-700', 'hover:bg-gray-200', 'dark:bg-gray-700', 'dark:text-gray-300', 'dark:hover:bg-gray-600');
         btn.classList.add('bg-blue-500', 'text-white');
-      } else if (pageNum !== '...') {
+      } else if (!isNaN(pageNum)) {
         btn.classList.remove('bg-blue-500', 'text-white');
         btn.classList.add('bg-gray-100', 'text-gray-700', 'hover:bg-gray-200', 'dark:bg-gray-700', 'dark:text-gray-300', 'dark:hover:bg-gray-600');
       }
@@ -198,10 +210,13 @@ const pageNumbers = generatePageNumbers(currentPage, totalPages);
     const nextButton = container.querySelector('[data-page="next"]');
     if (prevButton) prevButton.disabled = page === 1;
     if (nextButton) {
-      const allItems = document.querySelectorAll(`[data-item-section="${sectionId}"]`);
-      const visibleItems = Array.from(allItems).filter(item => !item.classList.contains('hidden'));
-      const totalPages = Math.ceil(visibleItems.length / 12);
-      nextButton.disabled = page === totalPages;
+      nextButton.disabled = page >= totalPages;
+    }
+
+    if (totalPages <= 1) {
+      container.style.display = 'none';
+    } else {
+      container.style.display = 'flex';
     }
   }
 
