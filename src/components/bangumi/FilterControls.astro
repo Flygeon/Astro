@@ -37,56 +37,73 @@ const { filters, activeFilter, sectionId } = Astro.props;
 </div>
 
 <script is:inline define:vars={{ sectionId }}>
-  function initFilterControls() {
-    const filterButtons = document.querySelectorAll(`[data-section="${sectionId}"][data-filter]`);
+  (function() {
+    const ITEMS_PER_PAGE = 6;
 
-    filterButtons.forEach(button => {
-      button.addEventListener('click', function() {
-        const filter = this.dataset.filter;
-        const currentSectionId = this.dataset.section;
+    function getAllItems(sectionId) {
+      return Array.from(document.querySelectorAll(`[data-item-section="${sectionId}"]`));
+    }
 
-        const sectionButtons = document.querySelectorAll(`[data-section="${currentSectionId}"][data-filter]`);
-        sectionButtons.forEach(btn => {
-          btn.classList.remove('bg-[var(--primary)]', 'text-white', 'shadow-md');
-          btn.classList.add('bg-gray-100', 'text-gray-700', 'hover:bg-gray-200', 'dark:bg-gray-700', 'dark:text-gray-300', 'dark:hover:bg-gray-600');
-        });
+    function showFirstPage(sectionId) {
+      const allItems = getAllItems(sectionId);
+      const visibleItems = allItems.filter(item => !item.classList.contains('hidden'));
 
-        this.classList.remove('bg-gray-100', 'text-gray-700', 'hover:bg-gray-200', 'dark:bg-gray-700', 'dark:text-gray-300', 'dark:hover:bg-gray-600');
-        this.classList.add('bg-[var(--primary)]', 'text-white', 'shadow-md');
+      allItems.forEach(item => {
+        item.style.display = 'none';
+      });
 
-        const items = document.querySelectorAll(`[data-item-section="${currentSectionId}"]`);
-        items.forEach(item => {
-          const itemStatus = item.dataset.itemStatus;
+      visibleItems.slice(0, ITEMS_PER_PAGE).forEach(item => {
+        item.style.display = 'block';
+      });
 
-          if (filter === 'all' || itemStatus === filter) {
-            item.classList.remove('hidden');
-            item.style.display = 'block';
-          } else {
-            item.classList.add('hidden');
-            item.style.display = 'none';
+      return visibleItems.length;
+    }
+
+    function initFilterControls() {
+      const filterButtons = document.querySelectorAll(`[data-section="${sectionId}"][data-filter]`);
+
+      filterButtons.forEach(button => {
+        button.addEventListener('click', function() {
+          const filter = this.dataset.filter;
+          const currentSectionId = this.dataset.section;
+
+          const sectionButtons = document.querySelectorAll(`[data-section="${currentSectionId}"][data-filter]`);
+          sectionButtons.forEach(btn => {
+            btn.classList.remove('bg-[var(--primary)]', 'text-white', 'shadow-md');
+            btn.classList.add('bg-gray-100', 'text-gray-700', 'hover:bg-gray-200', 'dark:bg-gray-700', 'dark:text-gray-300', 'dark:hover:bg-gray-600');
+          });
+
+          this.classList.remove('bg-gray-100', 'text-gray-700', 'hover:bg-gray-200', 'dark:bg-gray-700', 'dark:text-gray-300', 'dark:hover:bg-gray-600');
+          this.classList.add('bg-[var(--primary)]', 'text-white', 'shadow-md');
+
+          const items = getAllItems(currentSectionId);
+          items.forEach(item => {
+            const itemStatus = item.dataset.itemStatus;
+
+            if (filter === 'all' || itemStatus === filter) {
+              item.classList.remove('hidden');
+            } else {
+              item.classList.add('hidden');
+            }
+          });
+
+          const visibleCount = showFirstPage(currentSectionId);
+
+          const pagination = document.querySelector(`[data-pagination-section="${currentSectionId}"]`);
+          if (pagination) {
+            const event = new CustomEvent('updatePagination', {
+              detail: { visibleCount: visibleCount }
+            });
+            pagination.dispatchEvent(event);
           }
         });
-
-        updatePagination(currentSectionId);
       });
-    });
-  }
-
-  function updatePagination(sectionId) {
-    const visibleItems = document.querySelectorAll(`[data-item-section="${sectionId}"]:not(.hidden)`);
-    const pagination = document.querySelector(`[data-pagination-section="${sectionId}"]`);
-
-    if (pagination) {
-      const event = new CustomEvent('updatePagination', {
-        detail: { visibleCount: visibleItems.length }
-      });
-      pagination.dispatchEvent(event);
     }
-  }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initFilterControls);
-  } else {
-    initFilterControls();
-  }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initFilterControls);
+    } else {
+      initFilterControls();
+    }
+  })();
 </script>
