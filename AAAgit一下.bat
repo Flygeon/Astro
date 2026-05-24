@@ -2,5 +2,5 @@
 git add .
 git commit -m "upload"
 git push origin master:main
-echo å®Œæˆäº†å–µ~
+echo Íê³ÉÁËß÷~
 pause
