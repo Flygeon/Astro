@@ -111,7 +111,7 @@ const pageNumbers = generatePageNumbers(currentPage, totalPages);
 
 <script is:inline define:vars={{ sectionId }}>
   (function() {
-    const ITEMS_PER_PAGE = 6;
+    const ITEMS_PER_PAGE = 9;
     const PRIMARY_BG = 'bg-[var(--primary)]';
     const PRIMARY_TEXT = 'text-white';
     const DEFAULT_BG = 'bg-gray-100';
@@ -129,6 +129,18 @@ const pageNumbers = generatePageNumbers(currentPage, totalPages);
       return getAllItems(sectionId).filter(item => !item.classList.contains('hidden'));
     }
 
+    function loadVisibleImages(items) {
+      items.forEach(item => {
+        const img = item.querySelector('.bangumi-lazy-img');
+        if (img && img.dataset.src && !img.src) {
+          img.src = img.dataset.src;
+          img.onload = function() {
+            img.classList.remove('opacity-0');
+          };
+        }
+      });
+    }
+
     function showPage(sectionId, page) {
       const allItems = getAllItems(sectionId);
       const visibleItems = getVisibleItems(sectionId);
@@ -139,10 +151,13 @@ const pageNumbers = generatePageNumbers(currentPage, totalPages);
 
       const start = (page - 1) * ITEMS_PER_PAGE;
       const end = start + ITEMS_PER_PAGE;
+      const pageItems = visibleItems.slice(start, end);
 
-      visibleItems.slice(start, end).forEach(item => {
+      pageItems.forEach(item => {
         item.style.display = 'block';
       });
+
+      loadVisibleImages(pageItems);
     }
 
     function getCurrentPage(sectionId) {
@@ -231,10 +246,12 @@ const pageNumbers = generatePageNumbers(currentPage, totalPages);
       });
 
       const visibleItems = getVisibleItems(sectionId);
-      visibleItems.slice(0, ITEMS_PER_PAGE).forEach(item => {
+      const pageItems = visibleItems.slice(0, ITEMS_PER_PAGE);
+      pageItems.forEach(item => {
         item.style.display = 'block';
       });
 
+      loadVisibleImages(pageItems);
       updatePageDisplay(sectionId, 1, visibleCount);
     }
 

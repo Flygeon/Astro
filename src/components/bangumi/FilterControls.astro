@@ -1,14 +1,14 @@
 ---
 interface Filter {
-  value: string;
-  label: string;
-  count?: number;
+	value: string;
+	label: string;
+	count?: number;
 }
 
 interface Props {
-  filters: Filter[];
-  activeFilter: string;
-  sectionId: string;
+	filters: Filter[];
+	activeFilter: string;
+	sectionId: string;
 }
 
 const { filters, activeFilter, sectionId } = Astro.props;
@@ -38,7 +38,7 @@ const { filters, activeFilter, sectionId } = Astro.props;
 
 <script is:inline define:vars={{ sectionId }}>
   (function() {
-    const ITEMS_PER_PAGE = 6;
+    const ITEMS_PER_PAGE = 9;
 
     function getAllItems(sectionId) {
       return Array.from(document.querySelectorAll(`[data-item-section="${sectionId}"]`));
