@@ -9,6 +9,14 @@ const { item } = Astro.props;
 
 const subject_base_url = "https://bgm.tv/subject/";
 
+function getImageUrl(originalUrl: string | undefined): string | undefined {
+	if (!originalUrl) return undefined;
+	return originalUrl.replace(
+		"https://lain.bgm.tv/",
+		"https://lain.flygeon.top/",
+	);
+}
+
 const getStatusColor = (type: number) => {
 	switch (type) {
 		case 1:
@@ -53,7 +61,7 @@ const getStatusText = (type: number) => {
   <div class="aspect-[2/3] relative overflow-hidden">
     {item.subject?.images?.medium ? (
       <img
-        data-src={item.subject.images.medium}
+        data-src={getImageUrl(item.subject.images.medium)}
         alt={item.subject.name_cn || item.subject.name}
         class="bangumi-lazy-img w-full h-full object-cover pointer-events-none opacity-0 transition-opacity duration-300"
       />
