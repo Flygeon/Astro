@@ -19,10 +19,18 @@ html.is-animating .transition-swup-fade {
 }
 
 /* Main components */
+/* Content is visible by default for Lighthouse LCP detection.
+   Animation is only applied when JS adds .js-loaded class to <html>. */
 .onload-animation {
-    opacity: 0;
     animation: 300ms fade-in-up;
     animation-fill-mode: forwards;
+}
+html:not(.js-loaded) .onload-animation {
+    animation: none;
+    opacity: 1;
+}
+html.js-loaded .onload-animation {
+    opacity: 0;
 }
 #navbar {
     animation-delay: 0ms
