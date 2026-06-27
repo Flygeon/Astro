@@ -37,6 +37,7 @@ const hasBannerCredit =
 const hasBannerLink = !!siteConfig.banner.credit.url;
 const hasBannerText = siteConfig.banner.enable && !!siteConfig.banner.text?.title;
 const typingSpeed = siteConfig.banner.text?.typingSpeed ?? 80;
+const bannerSubtitle = siteConfig.banner.text?.subtitle || "";
 
 const mainPanelTop = siteConfig.banner.enable
 	? `calc(${BANNER_HEIGHT}vh - ${MAIN_PANEL_OVERLAPS_BANNER_HEIGHT}rem)`
@@ -194,7 +195,7 @@ const mainPanelTop = siteConfig.banner.enable
 </style>
 
 <script>
-const subtitle = {siteConfig.banner.text?.subtitle ? JSON.stringify(siteConfig.banner.text.subtitle) : '""'};
+const subtitle = {JSON.stringify(bannerSubtitle)};
 const speed = {typingSpeed};
 
 if (subtitle && document.getElementById('banner-typing-text')) {
