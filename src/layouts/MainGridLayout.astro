@@ -52,7 +52,7 @@ const mainPanelTop = siteConfig.banner.enable
 <!-- Navbar -->
 <slot slot="head" name="head"></slot>
 <div id="top-row" class="z-50 pointer-events-none relative transition-all duration-700 max-w-[var(--page-width)] px-0 md:px-4 mx-auto" class:list={[""]}>
-    <div id="navbar-wrapper" class="pointer-events-auto sticky top-0 transition-all">
+    <div id="navbar-wrapper" class="pointer-events-auto sticky top-0 transition-all backdrop-blur-xl">
         <Navbar></Navbar>
     </div>
 </div>
@@ -175,15 +175,15 @@ const mainPanelTop = siteConfig.banner.enable
         return path === normalizedBase || path === '/' || path.replace(/\/+$/, '') === normalizedBase.replace(/\/+$/, '');
     }
 
-    let typingTimer: ReturnType<typeof setTimeout> | null = null;
-    let typingInProgress = false;
+    let typingTimer = null;
+    let bannerTextSetupDone = false;
 
-    function typeText(element: HTMLElement, text: string, speed: number = 100, callback?: () => void) {
+    function typeText(element, text, speed, callback) {
+        speed = speed || 100;
         if (typingTimer) {
             clearTimeout(typingTimer);
             typingTimer = null;
         }
-        typingInProgress = true;
         element.textContent = '';
         let i = 0;
         function type() {
@@ -192,17 +192,17 @@ const mainPanelTop = siteConfig.banner.enable
                 i++;
                 typingTimer = setTimeout(type, speed);
             } else {
-                typingInProgress = false;
                 typingTimer = null;
                 if (callback) callback();
             }
         }
-        setTimeout(type, 800);
+        typingTimer = setTimeout(type, 800);
     }
 
     function startTyping() {
         const subtitle = document.getElementById('banner-subtitle');
         if (!subtitle) return;
+        if (typingTimer) return;
         const text = subtitle.getAttribute('data-text') || '';
         const shouldType = subtitle.getAttribute('data-typing') === 'true';
         if (shouldType && text) {
@@ -217,7 +217,6 @@ const mainPanelTop = siteConfig.banner.enable
             clearTimeout(typingTimer);
             typingTimer = null;
         }
-        typingInProgress = false;
         const subtitle = document.getElementById('banner-subtitle');
         if (subtitle) {
             const shouldType = subtitle.getAttribute('data-typing') === 'true';
@@ -227,7 +226,7 @@ const mainPanelTop = siteConfig.banner.enable
         }
     }
 
-    function handlePageChange() {
+    function handlePageView() {
         if (isHomePath(window.location.pathname)) {
             startTyping();
         } else {
@@ -235,19 +234,24 @@ const mainPanelTop = siteConfig.banner.enable
         }
     }
 
+    function handleVisitStart(visit) {
+        if (!isHomePath(visit.to.url)) {
+            stopTyping();
+        }
+    }
+
     function setup() {
+        if (bannerTextSetupDone) return;
+        bannerTextSetupDone = true;
+
         if (isHomePath(window.location.pathname)) {
             startTyping();
         }
-        window.swup?.hooks?.on('page:view', handlePageChange);
-        window.swup?.hooks?.on('visit:start', (visit: {to: {url: string}}) => {
-            if (!isHomePath(visit.to.url)) {
-                stopTyping();
-            }
-        });
+        window.swup.hooks.on('page:view', handlePageView);
+        window.swup.hooks.on('visit:start', handleVisitStart);
     }
 
-    if (window.swup) {
+    if (window?.swup?.hooks) {
         setup();
     } else {
         document.addEventListener('swup:enable', setup);
