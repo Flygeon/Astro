@@ -35,7 +35,8 @@ const {
 const hasBannerCredit =
 	siteConfig.banner.enable && siteConfig.banner.credit.enable;
 const hasBannerLink = !!siteConfig.banner.credit.url;
-const hasBannerText = siteConfig.banner.enable && !!siteConfig.banner.text?.title;
+const isHomePage = Astro.url.pathname === "/" || Astro.url.pathname === "";
+const hasBannerText = isHomePage && siteConfig.banner.enable && !!siteConfig.banner.text?.title;
 const typingSpeed = siteConfig.banner.text?.typingSpeed ?? 80;
 const bannerSubtitle = siteConfig.banner.text?.subtitle || "";
 
@@ -186,7 +187,7 @@ const mainPanelTop = siteConfig.banner.enable
 }
 
 .banner-navbar-wrapper .btn-plain {
-    color: rgba(255,255,255,0.9) !important;
+    color: rgba(0,0,0,0.85) !important;
 }
 
 .banner-navbar-wrapper .btn-plain:hover {
