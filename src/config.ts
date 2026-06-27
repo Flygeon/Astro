@@ -17,8 +17,17 @@ export const siteConfig: SiteConfig = {
 	},
 	banner: {
 		enable: true,
-		src: "assets/images/demo-banner.png", // Relative to the /src directory. Relative to the /public directory if it starts with '/'
+		src: "assets/images/banner.webp", // Relative to the /src directory. Relative to the /public directory if it starts with '/'
 		position: "center", // Equivalent to object-position, only supports 'top', 'center', 'bottom'. 'center' by default
+		title: {
+			enable: true,
+			text: "Flygeonの小站",
+		},
+		subtitle: {
+			enable: true,
+			text: "音无结弦之时，悦动天使之心",
+			typingEffect: true,
+		},
 		credit: {
 			enable: false, // Display the credit text of the banner image
 			text: "", // Credit text to be displayed

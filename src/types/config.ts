@@ -24,6 +24,15 @@ export type SiteConfig = {
 		enable: boolean;
 		src: string;
 		position?: "top" | "center" | "bottom";
+		title?: {
+			enable: boolean;
+			text: string;
+		};
+		subtitle?: {
+			enable: boolean;
+			text: string;
+			typingEffect?: boolean;
+		};
 		credit: {
 			enable: boolean;
 			text: string;

@@ -1,0 +1,76 @@
+---
+import type { MarkdownHeading } from "astro";
+import { siteConfig } from "../../config";
+
+interface Props {
+	class?: string;
+	style?: string;
+	headings: MarkdownHeading[];
+}
+
+const className = Astro.props.class;
+const style = Astro.props.style;
+let { headings = [] } = Astro.props;
+
+let minDepth = 10;
+for (const heading of headings) {
+	minDepth = Math.min(minDepth, heading.depth);
+}
+
+const maxLevel = siteConfig.toc.depth;
+
+const removeTailingHash = (text: string) => {
+	const lastIndexOfHash = text.lastIndexOf("#");
+	if (lastIndexOfHash !== text.length - 1) {
+		return text;
+	}
+	return text.substring(0, lastIndexOfHash);
+};
+---
+
+<div class:list={["card-base p-4", className]} {style}>
+	<div class="flex items-center gap-2 mb-3">
+		<div class="w-1 h-5 rounded-sm bg-[var(--primary)]"></div>
+		<span class="text-lg font-bold text-neutral-900 dark:text-neutral-100">目录</span>
+	</div>
+	<div id="sidebar-toc-inner-wrapper" class="max-h-[60vh] overflow-y-auto hide-scrollbar">
+		{headings.filter((heading) => heading.depth < minDepth + maxLevel).map((heading) =>
+			<a href={`#${heading.slug}`} class:list={[
+				"flex items-center gap-2 py-1.5 px-2 rounded-lg transition text-sm",
+				"hover:bg-[var(--toc-btn-hover)] active:bg-[var(--toc-btn-active)]",
+				heading.depth === minDepth ? "font-medium" : "",
+				heading.depth === minDepth + 1 ? "ml-4" : "",
+				heading.depth === minDepth + 2 ? "ml-8" : "",
+			]}>
+				{heading.depth === minDepth && (
+					<div class="w-5 h-5 shrink-0 rounded-lg text-xs flex items-center justify-center font-bold bg-[var(--toc-badge-bg)] text-[var(--btn-content)]">
+						●
+					</div>
+				)}
+				{heading.depth === minDepth + 1 && (
+					<div class="w-2 h-2 rounded-[0.1875rem] bg-[var(--toc-badge-bg)] shrink-0"></div>
+				)}
+				{heading.depth === minDepth + 2 && (
+					<div class="w-1.5 h-1.5 rounded-sm bg-black/5 dark:bg-white/10 shrink-0"></div>
+				)}
+				<span class:list={[
+					{
+						"text-neutral-900 dark:text-neutral-100": heading.depth === minDepth,
+						"text-neutral-700 dark:text-neutral-300": heading.depth === minDepth + 1,
+						"text-neutral-500 dark:text-neutral-400": heading.depth === minDepth + 2,
+					}
+				]}>{removeTailingHash(heading.text)}</span>
+			</a>
+		)}
+	</div>
+</div>
+
+<style>
+	#sidebar-toc-inner-wrapper::-webkit-scrollbar {
+		width: 0;
+	}
+	#sidebar-toc-inner-wrapper {
+		scrollbar-width: none;
+		-ms-overflow-style: none;
+	}
+</style>
