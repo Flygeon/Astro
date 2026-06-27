@@ -19,11 +19,6 @@ export const siteConfig: SiteConfig = {
 		enable: true,
 		src: "assets/images/demo-banner.png", // Relative to the /src directory. Relative to the /public directory if it starts with '/'
 		position: "center", // Equivalent to object-position, only supports 'top', 'center', 'bottom'. 'center' by default
-		text: {
-			title: "Flygeonの小站", // Large title text displayed on banner
-			subtitle: "音无结弦之时，悦动天使之心； 立于浮华之世，奏响天籁之音。", // Smaller subtitle with typing animation
-			typingSpeed: 80, // Typing speed in ms per character
-		},
 		credit: {
 			enable: false, // Display the credit text of the banner image
 			text: "", // Credit text to be displayed

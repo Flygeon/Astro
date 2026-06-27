@@ -24,11 +24,6 @@ export type SiteConfig = {
 		enable: boolean;
 		src: string;
 		position?: "top" | "center" | "bottom";
-		text?: {
-			title: string; // Large title text (no animation)
-			subtitle: string; // Smaller subtitle with typing animation
-			typingSpeed?: number; // Typing speed in ms per character
-		};
 		credit: {
 			enable: boolean;
 			text: string;
