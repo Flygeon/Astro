@@ -13,6 +13,7 @@ import {
 	BANNER_HEIGHT_EXTEND,
 	MAIN_PANEL_OVERLAPS_BANNER_HEIGHT,
 } from "../constants/constants";
+import { pathsEqual, url } from "../utils/url-utils";
 import Layout from "./Layout.astro";
 
 interface Props {
@@ -35,14 +36,12 @@ const {
 const hasBannerCredit =
 	siteConfig.banner.enable && siteConfig.banner.credit.enable;
 const hasBannerLink = !!siteConfig.banner.credit.url;
-const hasBannerText = siteConfig.banner.enable && !!siteConfig.banner.text?.title;
+const isHomePage = pathsEqual(Astro.url.pathname, url("/"));
+const hasBannerText = siteConfig.banner.enable && !!siteConfig.banner.text?.title && isHomePage;
 const typingSpeed = siteConfig.banner.text?.typingSpeed ?? 80;
 const bannerSubtitle = siteConfig.banner.text?.subtitle || "";
-const bannerTitleText = title || siteConfig.banner.text?.title || "";
-const isNonHomePage = !!title;
-const showBannerOverlay = siteConfig.banner.enable && (hasBannerText || isNonHomePage);
 
-const mainPanelTop = siteConfig.banner.enable
+const mainPanelTop = siteConfig.banner.enable && isHomePage
 	? `calc(${BANNER_HEIGHT}vh - ${MAIN_PANEL_OVERLAPS_BANNER_HEIGHT}rem)`
 	: "5.5rem";
 ---
@@ -53,32 +52,32 @@ const mainPanelTop = siteConfig.banner.enable
 <slot slot="head" name="head"></slot>
 <div id="top-row" class:list={[
 	"z-50 pointer-events-none relative transition-all duration-700 max-w-[var(--page-width)] px-0 md:px-4 mx-auto",
-	{ "banner-navbar": showBannerOverlay }
+	{ "banner-navbar": hasBannerText }
 ]}>
     <div id="navbar-wrapper" class:list={[
 		"pointer-events-auto sticky top-0 transition-all",
-		{ "banner-navbar-wrapper": showBannerOverlay }
+		{ "banner-navbar-wrapper": hasBannerText }
 	]}>
         <Navbar></Navbar>
     </div>
 </div>
 
 <!-- Banner -->
-{siteConfig.banner.enable && <div id="banner-wrapper" class={`absolute z-10 w-full transition duration-700 overflow-hidden`} style={`top: -${BANNER_HEIGHT_EXTEND}vh`}>
+{siteConfig.banner.enable && isHomePage && <div id="banner-wrapper" class={`absolute z-10 w-full transition duration-700 overflow-hidden`} style={`top: -${BANNER_HEIGHT_EXTEND}vh`}>
     <ImageWrapper id="banner" alt="Banner image of the blog" class:list={["object-cover h-full transition duration-700 opacity-0 scale-105"]}
                   src={siteConfig.banner.src} position={siteConfig.banner.position}
     >
     </ImageWrapper>
-    {showBannerOverlay && (
+    {hasBannerText && (
         <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none"
              style="background: linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, transparent 40%, transparent 70%, rgba(0,0,0,0.4) 100%)"
         >
             <h1 class="text-white font-bold drop-shadow-lg text-center px-4 banner-title"
                 style="font-size: 3.5rem; text-shadow: 0 2px 10px rgba(0,0,0,0.5), 0 0 40px rgba(0,0,0,0.3)"
             >
-                {bannerTitleText}
+                {siteConfig.banner.text.title}
             </h1>
-            {!isNonHomePage && siteConfig.banner.text.subtitle && (
+            {siteConfig.banner.text.subtitle && (
                 <p class="text-white/80 text-center px-4 mt-4 banner-subtitle"
                    style="font-size: 1.2rem; text-shadow: 0 1px 6px rgba(0,0,0,0.4)"
                 >
@@ -197,86 +196,8 @@ const mainPanelTop = siteConfig.banner.enable
 }
 </style>
 
-<script define:vars={{ subtitle: bannerSubtitle, speed: typingSpeed, isNonHomePage, siteTitle: siteConfig.title, homeTitle: siteConfig.banner.text?.title || '' }}>
-const HOME_SUBTITLE = {JSON.stringify(siteConfig.banner.text?.subtitle || '')};
-
-function getPageTitle() {
-    const docTitle = document.title;
-    const idx = docTitle.indexOf(' - ');
-    if (idx > 0) {
-        const before = docTitle.substring(0, idx);
-        if (before === siteTitle) return '';
-        return before;
-    }
-    return docTitle;
-}
-
-function updateBannerTitle() {
-    const titleEl = document.querySelector('.banner-title');
-    if (!titleEl) return;
-    const pageTitle = getPageTitle();
-    titleEl.textContent = pageTitle || homeTitle;
-}
-
-function updateNavbarStyle() {
-    const topRow = document.getElementById('top-row');
-    const navbarWrapper = document.getElementById('navbar-wrapper');
-    if (!topRow || !navbarWrapper) return;
-    const pageTitle = getPageTitle();
-    const hasOverlay = homeTitle || pageTitle;
-    if (hasOverlay) {
-        topRow.classList.add('banner-navbar');
-        navbarWrapper.classList.add('banner-navbar-wrapper');
-    } else {
-        topRow.classList.remove('banner-navbar');
-        navbarWrapper.classList.remove('banner-navbar-wrapper');
-    }
-}
-
-function resetTypingAnimation() {
-    const el = document.getElementById('banner-typing-text');
-    const cursor = document.getElementById('banner-cursor');
-    if (el) el.textContent = '';
-    if (cursor) cursor.style.display = 'inline-block';
-
-    if (HOME_SUBTITLE && el) {
-        let i = 0;
-        function type() {
-            if (i < HOME_SUBTITLE.length) {
-                el.textContent += HOME_SUBTITLE.charAt(i);
-                i++;
-                setTimeout(type, speed);
-            } else if (cursor) {
-                setTimeout(() => { cursor.style.display = 'none'; }, 1500);
-            }
-        }
-        setTimeout(type, 800);
-    }
-}
-
-if (window.swup) {
-    window.swup.hooks.on('page:view', () => {
-        updateBannerTitle();
-        updateNavbarStyle();
-        const pageTitle = getPageTitle();
-        if (!pageTitle) {
-            resetTypingAnimation();
-        }
-    });
-} else {
-    document.addEventListener('swup:enable', () => {
-        window.swup.hooks.on('page:view', () => {
-            updateBannerTitle();
-            updateNavbarStyle();
-            const pageTitle = getPageTitle();
-            if (!pageTitle) {
-                resetTypingAnimation();
-            }
-        });
-    });
-}
-
-if (!isNonHomePage && subtitle && document.getElementById('banner-typing-text')) {
+<script define:vars={{ subtitle: bannerSubtitle, speed: typingSpeed }}>
+if (subtitle && document.getElementById('banner-typing-text')) {
     const el = document.getElementById('banner-typing-text');
     const cursor = document.getElementById('banner-cursor');
     let i = 0;
