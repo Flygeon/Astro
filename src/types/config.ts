@@ -24,6 +24,11 @@ export type SiteConfig = {
 		enable: boolean;
 		src: string;
 		position?: "top" | "center" | "bottom";
+		text?: {
+			enable: boolean;
+			content: string;
+			fontSize?: string;
+		};
 		credit: {
 			enable: boolean;
 			text: string;

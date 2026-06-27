@@ -19,6 +19,11 @@ export const siteConfig: SiteConfig = {
 		enable: true,
 		src: "assets/images/demo-banner.png", // Relative to the /src directory. Relative to the /public directory if it starts with '/'
 		position: "center", // Equivalent to object-position, only supports 'top', 'center', 'bottom'. 'center' by default
+		text: {
+			enable: true, // Display text overlay on the banner
+			content: "Flygeonの小站", // Text content to display
+			fontSize: "2rem", // Font size of the text
+		},
 		credit: {
 			enable: false, // Display the credit text of the banner image
 			text: "", // Credit text to be displayed

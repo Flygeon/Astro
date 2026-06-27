@@ -57,6 +57,17 @@ const mainPanelTop = siteConfig.banner.enable
                   src={siteConfig.banner.src} position={siteConfig.banner.position}
     >
     </ImageWrapper>
+    {siteConfig.banner.text?.enable && (
+        <div class="absolute inset-0 flex items-center justify-center pointer-events-none"
+             style={`background: linear-gradient(to bottom, transparent 60%, rgba(0,0,0,0.6) 100%)`}
+        >
+            <h1 class="text-white font-bold drop-shadow-lg text-center px-4"
+                style={`font-size: ${siteConfig.banner.text.fontSize || '2rem'}`}
+            >
+                {siteConfig.banner.text.content}
+            </h1>
+        </div>
+    )}
 </div>}
 
 <!-- Main content -->
