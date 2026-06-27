@@ -194,10 +194,7 @@ const mainPanelTop = siteConfig.banner.enable
 }
 </style>
 
-<script>
-const subtitle = {JSON.stringify(bannerSubtitle)};
-const speed = {typingSpeed};
-
+<script define:vars={{ subtitle: bannerSubtitle, speed: typingSpeed }}>
 if (subtitle && document.getElementById('banner-typing-text')) {
     const el = document.getElementById('banner-typing-text');
     const cursor = document.getElementById('banner-cursor');
@@ -208,11 +205,9 @@ if (subtitle && document.getElementById('banner-typing-text')) {
             i++;
             setTimeout(type, speed);
         } else if (cursor) {
-            // Hide cursor after typing completes
             setTimeout(() => { cursor.style.display = 'none'; }, 1500);
         }
     }
-    // Start typing after banner fades in
     setTimeout(type, 800);
 }
 </script>
