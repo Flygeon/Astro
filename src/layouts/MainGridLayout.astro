@@ -197,7 +197,85 @@ const mainPanelTop = siteConfig.banner.enable
 }
 </style>
 
-<script define:vars={{ subtitle: bannerSubtitle, speed: typingSpeed, isNonHomePage }}>
+<script define:vars={{ subtitle: bannerSubtitle, speed: typingSpeed, isNonHomePage, siteTitle: siteConfig.title, homeTitle: siteConfig.banner.text?.title || '' }}>
+const HOME_SUBTITLE = {JSON.stringify(siteConfig.banner.text?.subtitle || '')};
+
+function getPageTitle() {
+    const docTitle = document.title;
+    const idx = docTitle.indexOf(' - ');
+    if (idx > 0) {
+        const before = docTitle.substring(0, idx);
+        if (before === siteTitle) return '';
+        return before;
+    }
+    return docTitle;
+}
+
+function updateBannerTitle() {
+    const titleEl = document.querySelector('.banner-title');
+    if (!titleEl) return;
+    const pageTitle = getPageTitle();
+    titleEl.textContent = pageTitle || homeTitle;
+}
+
+function updateNavbarStyle() {
+    const topRow = document.getElementById('top-row');
+    const navbarWrapper = document.getElementById('navbar-wrapper');
+    if (!topRow || !navbarWrapper) return;
+    const pageTitle = getPageTitle();
+    const hasOverlay = homeTitle || pageTitle;
+    if (hasOverlay) {
+        topRow.classList.add('banner-navbar');
+        navbarWrapper.classList.add('banner-navbar-wrapper');
+    } else {
+        topRow.classList.remove('banner-navbar');
+        navbarWrapper.classList.remove('banner-navbar-wrapper');
+    }
+}
+
+function resetTypingAnimation() {
+    const el = document.getElementById('banner-typing-text');
+    const cursor = document.getElementById('banner-cursor');
+    if (el) el.textContent = '';
+    if (cursor) cursor.style.display = 'inline-block';
+
+    if (HOME_SUBTITLE && el) {
+        let i = 0;
+        function type() {
+            if (i < HOME_SUBTITLE.length) {
+                el.textContent += HOME_SUBTITLE.charAt(i);
+                i++;
+                setTimeout(type, speed);
+            } else if (cursor) {
+                setTimeout(() => { cursor.style.display = 'none'; }, 1500);
+            }
+        }
+        setTimeout(type, 800);
+    }
+}
+
+if (window.swup) {
+    window.swup.hooks.on('page:view', () => {
+        updateBannerTitle();
+        updateNavbarStyle();
+        const pageTitle = getPageTitle();
+        if (!pageTitle) {
+            resetTypingAnimation();
+        }
+    });
+} else {
+    document.addEventListener('swup:enable', () => {
+        window.swup.hooks.on('page:view', () => {
+            updateBannerTitle();
+            updateNavbarStyle();
+            const pageTitle = getPageTitle();
+            if (!pageTitle) {
+                resetTypingAnimation();
+            }
+        });
+    });
+}
+
 if (!isNonHomePage && subtitle && document.getElementById('banner-typing-text')) {
     const el = document.getElementById('banner-typing-text');
     const cursor = document.getElementById('banner-cursor');
