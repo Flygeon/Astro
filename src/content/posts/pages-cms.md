@@ -1,5 +1,5 @@
 ---
-id: "13"
+id: "013"
 title: 哎我去这个Pages CMS真神了
 published: 2026-07-04
 description: 通过向你的静态博客仓库导入Pages CMS实现在浏览器里优雅地管理你的文章
