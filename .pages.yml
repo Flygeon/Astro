@@ -1,0 +1,108 @@
+# .pages.yml
+# Pages CMS 配置文件 – 适配 Astro + Fuwari 主题
+
+# ============================================================
+# 媒体文件配置
+# ============================================================
+media:
+  # 图片在仓库中的本地存储路径
+  input: /image
+  # 图片的公开访问 URL 前缀（最终插入 Markdown 的路径）
+  output: https://raw.flygeon.eu.org/Flygeon/Astro/refs/heads/main/image/
+  # 上传时自动对文件名进行安全处理（slugify）
+  rename: safe
+  # 允许上传的图片扩展名
+  extensions: [png, jpg, jpeg, webp, gif, svg]
+
+# ============================================================
+# 内容集合配置
+# ============================================================
+content:
+  - name: posts
+    label: 文章
+    type: collection
+    path: src/content/posts
+    format: yaml-frontmatter
+    subfolders: true
+
+    # ---------- 字段定义 ----------
+    fields:
+      # 必填字段
+      - name: title
+        label: 标题
+        type: string
+        required: true
+
+      - name: published
+        label: 发布日期
+        type: date
+        required: true
+
+      # 正文（富文本编辑器，保存为 Markdown）
+      - name: body
+        label: 正文
+        type: rich-text
+        required: true
+
+      # 可选字段
+      - name: description
+        label: 摘要
+        type: text
+        required: false
+        hint: 简短的文章摘要，用于 SEO 和列表页展示
+
+      - name: image
+        label: 封面图片
+        type: media          # 使用 media 类型，自动应用 media.output 前缀
+        required: false
+        hint: 选择一张封面图片
+
+      - name: tags
+        label: 标签
+        type: string
+        list: true
+        required: false
+        hint: 输入标签，按回车添加多个
+
+      - name: category
+        label: 分类
+        type: string
+        required: false
+
+      - name: draft
+        label: 草稿
+        type: boolean
+        default: false
+        required: false
+
+      # Fuwari 扩展字段（可选）
+      - name: updated
+        label: 更新日期
+        type: date
+        required: false
+        hint: 文章最后更新日期
+
+      - name: pinned
+        label: 置顶
+        type: boolean
+        default: false
+        required: false
+        hint: 是否将文章置顶到列表顶部
+
+      - name: lang
+        label: 语言
+        type: string
+        required: false
+        hint: 语言代码（如 zh, en, jp），仅当与站点默认语言不同时设置
+
+    # ---------- 列表视图配置 ----------
+    view:
+      primary: title            # 主键字段
+      sort: published           # 默认排序字段
+      order: desc               # 降序（最新在前）
+      fields: [title, published, draft, tags]   # 列表显示列
+
+    # ---------- 新建文件命名模板 ----------
+    filename:
+      template: "{year}-{month}-{day}-{primary}.md"
+      field: title              # {primary} 取自 title 字段
