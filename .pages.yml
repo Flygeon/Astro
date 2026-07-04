@@ -15,7 +15,7 @@ content:
 
     fields:
       # ---------- 新增 id 字段（用于生成文件名）----------
-      - name: id
+      - name: create
         label: 文章序号
         type: string
         required: true
@@ -75,18 +75,14 @@ content:
         type: boolean
         default: false
 
-      - name: lang
-        label: 语言
-        type: string
-        required: false
 
     view:
       primary: title
       sort: published
       order: desc
-      fields: [id, title, published, draft, tags]   # 列表显示 id 方便查看
+      fields: [create, title, published, draft, tags]   # 列表显示 id 方便查看
 
     # ---------- 文件名模板：使用 id 字段的值 ----------
     filename:
       template: "{primary}.md"
-      field: id        # 从 frontmatter 的 id 字段取值，注意必须存在且非空
+      field: create        # 从 frontmatter 的 create 字段取值，注意必须存在且非空
