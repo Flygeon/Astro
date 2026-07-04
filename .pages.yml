@@ -85,4 +85,4 @@ content:
     # ---------- 文件名模板：使用 id 字段的值 ----------
     filename:
       template: "{primary}.md"
-      field: create        # 从 frontmatter 的 create 字段取值，注意必须存在且非空
+      field: title       # 从 frontmatter 的 create 字段取值，注意必须存在且非空
