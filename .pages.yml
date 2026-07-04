@@ -1,0 +1,78 @@
+# .pages.yml
+# 针对 Fuwari 主题 + 远程图片 URL 优化
+
+media:
+  input: /image
+  output: https://raw.flygeon.eu.org/Flygeon/Astro/refs/heads/main/image/
+  rename: safe
+  extensions: [png, jpg, jpeg, webp, gif, svg]
+
+content:
+  - name: posts
+    label: 文章
+    type: collection
+    path: src/content/posts
+    format: yaml-frontmatter
+    subfolders: true
+
+    fields:
+      - name: title
+        label: 标题
+        type: string
+        required: true
+
+      - name: published
+        label: 发布日期
+        type: date
+        required: true
+
+      - name: body
+        label: 正文
+        type: rich-text
+        required: true
+
+      - name: description
+        label: 摘要
+        type: text
+        required: false
+
+      - name: tags
+        label: 标签
+        type: string
+        list: true
+        required: false
+
+      - name: category
+        label: 分类
+        type: string
+        required: false
+
+      - name: draft
+        label: 草稿
+        type: boolean
+        default: false
+
+      - name: updated
+        label: 更新日期
+        type: date
+        required: false
+
+      - name: pinned
+        label: 置顶
+        type: boolean
+        default: false
+
+      - name: lang
+        label: 语言
+        type: string
+        required: false
+
+    view:
+      primary: title
+      sort: published
+      order: desc
+      fields: [title, published, draft, tags]
+
+    filename:
+      template: "{year}-{month}-{day}-{primary}.md"
+      field: title
