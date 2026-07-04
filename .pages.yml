@@ -36,6 +36,13 @@ content:
         type: text
         required: false
 
+      # 关键：image 字段设为 string，不进行媒体映射，避免读取失败
+      - name: image
+        label: 封面图片 URL
+        type: string
+        required: false
+        hint: 请输入纯文本 URL，例如 https://raw.flygeon.eu.org/.../image/xxx.webp
+
       - name: tags
         label: 标签
         type: string
