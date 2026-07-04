@@ -13,15 +13,6 @@ content:
     format: yaml-frontmatter
     subfolders: true
 
-    fields:
-      # ---------- 新增 id 字段（用于生成文件名）----------
-      - name: create
-        label: 文章序号
-        type: string
-        required: true
-        hint: "请输入数字序号，如 001、002（需手动维护连续）"
-        # 建议在后台排列时将该字段放在最前面，便于填写
-
       - name: title
         label: 标题
         type: string
@@ -80,7 +71,7 @@ content:
       primary: title
       sort: published
       order: desc
-      fields: [create, title, published, draft, tags]   # 列表显示 id 方便查看
+      fields: [title, published, draft, tags]   # 列表显示 id 方便查看
 
     # ---------- 文件名模板：使用 id 字段的值 ----------
     filename:
