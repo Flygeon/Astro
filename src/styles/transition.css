@@ -29,9 +29,12 @@ html:not(.js-loaded) .onload-animation {
     animation: none;
     opacity: 1;
 }
-html.js-loaded .onload-animation {
-    opacity: 0;
-}
+/* NOTE: previously `.onload-animation` was set to `opacity: 0` once `js-loaded`
+   was on <html>, relying solely on the one-shot `fade-in-up` animation to make
+   content visible. On Swup client-side navigations the animation does not reliably
+   replay, so swapped content (e.g. the article body `.markdown-content`) stayed
+   stuck invisible. We no longer force opacity:0 — content is visible by default
+   and the animation only provides the entrance fade-in when it does run. */
 #navbar {
     animation-delay: 0ms
 }
