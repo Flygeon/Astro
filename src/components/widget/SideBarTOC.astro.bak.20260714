@@ -105,14 +105,13 @@ const maxLevel = siteConfig.toc.depth;
 		background: var(--primary);
 	}
 
-	/* 悬停目录时，高亮块保持可见但微微提亮，不再透明 */
+	/* 悬停目录时，高亮块变为虚线边框、底色透明（复刻原版交互） */
 	#sidebar-toc:hover #sidebar-active-indicator {
-		background-color: var(--toc-item-active);
-		filter: brightness(1.05);
-		border-color: transparent;
+		background-color: transparent;
+		border-color: var(--toc-btn-active);
 	}
 	#sidebar-toc:hover #sidebar-active-indicator::before {
-		background: var(--primary);
+		background: var(--toc-btn-active);
 	}
 
 	/* 高亮区间内文字加粗并加深，进一步提升对比度 */
@@ -128,12 +127,11 @@ const maxLevel = siteConfig.toc.depth;
 		color: rgb(245 245 245);
 	}
 
-	/* 当前高亮区间内的链接，hover 时不叠加额外背景，避免盖住高亮块 */
-	#sidebar-toc .sidebar-toc-link.sidebar-toc-active:hover {
-		background-color: transparent;
+	/* 托底：底部渐隐遮罩，仅作用于可视区最末 ~10%，不影响高亮块主体 */
+	#sidebar-toc {
+		-webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 90%, transparent 100%);
+		mask-image: linear-gradient(to bottom, #000 0%, #000 90%, transparent 100%);
 	}
-
-	/* 无底部遮罩：彻底去掉渐隐痕迹 */
 </style>
 
 <script>
@@ -144,10 +142,10 @@ const maxLevel = siteConfig.toc.depth;
 
 	let indicator = null;
 	let entries = [];
-	let currentToc = null;
-	let currentRange = { min: -1, max: -1 };
-	let ticking = false;
+	let active = [];
 	let anchorNavTarget = null;
+	let currentToc = null;
+	let ticking = false;
 
 	function getToc() {
 		return document.getElementById("sidebar-toc");
@@ -159,7 +157,6 @@ const maxLevel = siteConfig.toc.depth;
 			currentToc = null;
 			return;
 		}
-		// 已为当前 toc 初始化过（Swup 未换页时不再重复绑定）
 		if (toc === currentToc) return;
 		currentToc = toc;
 
@@ -175,91 +172,44 @@ const maxLevel = siteConfig.toc.depth;
 			const heading = slug ? document.getElementById(slug) : null;
 			return { link, heading };
 		});
+		active = new Array(entries.length).fill(false);
 
 		toc.addEventListener("click", onAnchorClick, { capture: true });
 
+		computeActive();
 		update();
 	}
 
-	// 用滚动帧精确复刻原 IntersectionObserver 的 active 范围：
-	// threshold:0 + rootMargin:0 0 -10% 0 => active zone = 视口顶部到视口高度 90%
-	// 每帧重新计算，滚过即取消，不再依赖会卡住的 IO 状态。
-	function computeRange() {
-		if (!entries.length) return { min: -1, max: -1 };
-		const zoneBottom = window.innerHeight * 0.9;
-		let min = -1;
-		let max = -1;
+	// 以视口 20% 高度为阅读触发线，当前章节 = 最后一个 top <= trigger 的 heading
+	function computeActive() {
+		const trigger = window.innerHeight * 0.2;
+		let idx = -1;
 		for (let i = 0; i < entries.length; i++) {
 			const h = entries[i].heading;
 			if (!h) continue;
 			const top = h.getBoundingClientRect().top;
-			const bottom = h.getBoundingClientRect().bottom;
-			// 与 IO 的 intersecting 条件等价：heading 与 [0, zoneBottom] 有交集
-			if (bottom > 0 && top < zoneBottom) {
-				if (min === -1) min = i;
-				max = i;
-			}
-		}
-		// 没有任何 heading 在 active zone 内：兜底为最后一个 top 不高于 zoneBottom 的 item
-		if (min === -1) {
-			for (let i = entries.length - 1; i >= 0; i--) {
-				const h = entries[i].heading;
-				if (!h) continue;
-				if (h.getBoundingClientRect().top <= zoneBottom) {
-					return { min: i, max: i };
-				}
-			}
-			return { min: -1, max: -1 };
-		}
-		return { min, max };
-	}
-
-	function update() {
-		const toc = getToc();
-		if (!toc || !indicator || !entries.length) return;
-
-		let { min, max } = computeRange();
-
-		// 点击锚点导航期间：锁定目标章节高亮，直到 scroll 把它自然带进 active zone
-		if (anchorNavTarget) {
-			const targetIdx = entries.findIndex((e) => e.heading === anchorNavTarget);
-			if (targetIdx !== -1) {
-				if (min <= targetIdx && targetIdx <= max) {
-					anchorNavTarget = null;
-				} else {
-					min = max = targetIdx;
-				}
+			if (top <= trigger) {
+				idx = i;
 			} else {
-				anchorNavTarget = null;
+				break;
 			}
 		}
 
-		if (min === -1 || max === -1) {
-			clearBlock();
-			return;
+		active = new Array(entries.length).fill(false);
+		if (idx !== -1) active[idx] = true;
+
+		// 点击目录锚点后，保持目标高亮直到它滚过触发线
+		if (anchorNavTarget) {
+			const tIdx = entries.findIndex((e) => e.heading === anchorNavTarget);
+			if (tIdx !== -1) {
+				if (anchorNavTarget.getBoundingClientRect().top > trigger) {
+					active = new Array(entries.length).fill(false);
+					active[tIdx] = true;
+				} else {
+					anchorNavTarget = null;
+				}
+			}
 		}
-
-		if (min === currentRange.min && max === currentRange.max) return;
-		currentRange = { min, max };
-
-		const parentOffset = toc.getBoundingClientRect().top;
-		const scrollOffset = toc.scrollTop;
-		const top = entries[min].link.getBoundingClientRect().top - parentOffset + scrollOffset;
-		const bottom = entries[max].link.getBoundingClientRect().bottom - parentOffset + scrollOffset;
-
-		indicator.style.opacity = "1";
-		indicator.style.top = top + "px";
-		indicator.style.height = bottom - top + "px";
-
-		entries.forEach((e, i) => {
-			e.link.classList.toggle("sidebar-toc-active", i >= min && i <= max);
-		});
-	}
-
-	function clearBlock() {
-		if (indicator) indicator.style.opacity = "0";
-		entries.forEach((e) => e.link.classList.remove("sidebar-toc-active"));
-		currentRange = { min: -1, max: -1 };
 	}
 
 	function schedule() {
@@ -267,8 +217,49 @@ const maxLevel = siteConfig.toc.depth;
 		ticking = true;
 		requestAnimationFrame(() => {
 			ticking = false;
+			computeActive();
 			update();
 		});
+	}
+
+	function update() {
+		requestAnimationFrame(() => {
+			const toc = getToc();
+			if (!toc || !indicator || !entries.length) return;
+
+			let min = -1;
+			let max = -1;
+			for (let i = 0; i < active.length; i++) {
+				if (active[i]) {
+					if (min === -1) min = i;
+					max = i;
+				}
+			}
+			if (min === -1) {
+				clearBlock();
+				return;
+			}
+
+			const parentOffset = toc.getBoundingClientRect().top;
+			const scrollOffset = toc.scrollTop;
+			const top =
+				entries[min].link.getBoundingClientRect().top - parentOffset + scrollOffset;
+			const bottom =
+				entries[max].link.getBoundingClientRect().bottom - parentOffset + scrollOffset;
+
+			indicator.style.opacity = "1";
+			indicator.style.top = top + "px";
+			indicator.style.height = bottom - top + "px";
+
+			for (let i = 0; i < entries.length; i++) {
+				entries[i].link.classList.toggle("sidebar-toc-active", i >= min && i <= max);
+			}
+		});
+	}
+
+	function clearBlock() {
+		if (indicator) indicator.style.opacity = "0";
+		entries.forEach((e) => e.link.classList.remove("sidebar-toc-active"));
 	}
 
 	function onAnchorClick(event) {
@@ -281,10 +272,6 @@ const maxLevel = siteConfig.toc.depth;
 		anchorNavTarget = idx !== -1 ? entries[idx].heading : null;
 	}
 
-	// 滚动 / 缩放：rAF 节流，每帧都重新计算 active zone，上下滚动都实时回收/扩展
-	window.addEventListener("scroll", schedule, { passive: true });
-	window.addEventListener("resize", schedule, { passive: true });
-
 	// 首屏初始化
 	if (document.readyState === "loading") {
 		document.addEventListener("DOMContentLoaded", setup, { once: true });
@@ -292,10 +279,13 @@ const maxLevel = siteConfig.toc.depth;
 		setup();
 	}
 
+	// 滚动与尺寸变化时重新计算
+	window.addEventListener("scroll", schedule, { passive: true });
+	window.addEventListener("resize", schedule, { passive: true });
+
 	// Swup 客户端导航：换页后重新初始化（Astro 内联脚本不会随容器重跑）
 	function onPageView() {
 		currentToc = null;
-		currentRange = { min: -1, max: -1 };
 		anchorNavTarget = null;
 		requestAnimationFrame(setup);
 	}
