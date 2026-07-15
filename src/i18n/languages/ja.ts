@@ -37,4 +37,9 @@ export const ja: Translation = {
 	[Key.license]: "ライセンス",
 	[Key.friends]: "フレンド",
 	[Key.bangumi]: "Bangumi",
+	[Key.aigcLabel]: "コンテンツ作成方式",
+	[Key.aigcAssisted]: "AI 支援作成",
+	[Key.aigcAi]: "AI 生成",
+	[Key.aigcHuman]: "人間作成",
+	[Key.pinned]: "固定",
 };

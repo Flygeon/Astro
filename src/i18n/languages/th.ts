@@ -37,4 +37,9 @@ export const th: Translation = {
 	[Key.license]: "สัญญาอนุญาต",
 	[Key.friends]: "เพื่อน",
 	[Key.bangumi]: "Bangumi",
+	[Key.aigcLabel]: "รูปแบบการสร้าง",
+	[Key.aigcAssisted]: "เขียนร่วมกับ AI",
+	[Key.aigcAi]: "สร้างโดย AI",
+	[Key.aigcHuman]: "เขียนโดยมนุษย์",
+	[Key.pinned]: "ปักหมุด",
 };

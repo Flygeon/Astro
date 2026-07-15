@@ -37,4 +37,9 @@ export const zh_TW: Translation = {
 	[Key.license]: "許可協議",
 	[Key.friends]: "友鏈",
 	[Key.bangumi]: "Bangumi",
+	[Key.aigcLabel]: "內容創作方式",
+	[Key.aigcAssisted]: "AI 輔助創作",
+	[Key.aigcAi]: "完全由 AI 創作",
+	[Key.aigcHuman]: "非 AI 創作",
+	[Key.pinned]: "置頂",
 };

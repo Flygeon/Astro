@@ -10,6 +10,13 @@ async function getRawSortedPosts() {
 	});
 
 	const sorted = allBlogPosts.sort((a, b) => {
+		// Pinned posts always come first
+		const pinnedA = a.data.pinned === true;
+		const pinnedB = b.data.pinned === true;
+		if (pinnedA !== pinnedB) {
+			return pinnedA ? -1 : 1;
+		}
+		// Then sort by publication date (newest first)
 		const dateA = new Date(a.data.published);
 		const dateB = new Date(b.data.published);
 		return dateA > dateB ? -1 : 1;

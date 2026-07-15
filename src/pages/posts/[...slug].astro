@@ -27,6 +27,14 @@ const { Content, headings } = await entry.render();
 
 const { remarkPluginFrontmatter } = await entry.render();
 
+/* AIGC content disclosure badge */
+const aigcMap = {
+	assisted: { icon: "material-symbols:assistant", label: i18n(I18nKey.aigcAssisted) },
+	ai: { icon: "material-symbols:auto-awesome", label: i18n(I18nKey.aigcAi) },
+	human: { icon: "material-symbols:person", label: i18n(I18nKey.aigcHuman) },
+} as const;
+const aigcInfo = aigcMap[(entry.data.aigc as keyof typeof aigcMap) ?? "human"];
+
 const jsonLd = {
 	"@context": "https://schema.org",
 	"@type": "BlogPosting",
@@ -83,15 +91,24 @@ const jsonLd = {
                 </div>
             </div>
 
-            <!-- metadata -->
+            <!-- metadata (含 AIGC 创作标识) -->
             <div class="onload-animation">
-                <PostMetadata
-                        class="mb-5"
+                <div class:list={["flex flex-wrap text-neutral-500 dark:text-neutral-400 items-center gap-4 gap-x-4 gap-y-2 mb-5"]}>
+                    <!-- AIGC content disclosure -->
+                    <div class="flex items-center" title={i18n(I18nKey.aigcLabel)}>
+                        <div class="meta-icon">
+                            <Icon name={aigcInfo.icon} class="text-xl"></Icon>
+                        </div>
+                        <span class="text-sm font-medium">{aigcInfo.label}</span>
+                    </div>
+
+                    <PostMetadata
                         published={entry.data.published}
                         updated={entry.data.updated}
                         tags={entry.data.tags}
                         category={entry.data.category}
-                ></PostMetadata>
+                    ></PostMetadata>
+                </div>
                 {!entry.data.image && <div class="border-[var(--line-divider)] border-dashed border-b-[1px] mb-5"></div>}
             </div>
 
@@ -148,4 +165,8 @@ const jsonLd = {
         crossorigin="anonymous"
         async>
 </script>
+
+<style>
+    /* AIGC 标识在署名区中与其他元信息项风格统一，无需额外样式 */
+</style>
 </MainGridLayout>

@@ -12,6 +12,13 @@ const postsCollection = defineCollection({
 		category: z.string().optional().nullable().default(""),
 		lang: z.string().optional().default(""),
 
+		/* AIGC content disclosure:
+		   assisted = AI 辅助创作, ai = 完全由 AI 创作, human = 非 AI 创作 */
+		aigc: z.enum(["assisted", "ai", "human"]).optional().default("human"),
+
+		/* Pinned/sticky post: when true, the post is sorted to the top of listings */
+		pinned: z.boolean().optional().default(false),
+
 		/* For internal use */
 		prevTitle: z.string().default(""),
 		prevSlug: z.string().default(""),

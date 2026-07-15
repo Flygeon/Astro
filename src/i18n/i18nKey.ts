@@ -34,6 +34,15 @@ enum I18nKey {
 	license = "license",
 	friends = "friends",
 	bangumi = "bangumi",
+
+	/* AIGC content disclosure */
+	aigcLabel = "aigcLabel",
+	aigcAssisted = "aigcAssisted",
+	aigcAi = "aigcAi",
+	aigcHuman = "aigcHuman",
+
+	/* Pinned / sticky post */
+	pinned = "pinned",
 }
 
 export default I18nKey;

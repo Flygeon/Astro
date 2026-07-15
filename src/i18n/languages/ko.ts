@@ -37,4 +37,9 @@ export const ko: Translation = {
 	[Key.license]: "라이선스",
 	[Key.friends]: "친구",
 	[Key.bangumi]: "Bangumi",
+	[Key.aigcLabel]: "콘텐츠 작성 방식",
+	[Key.aigcAssisted]: "AI 보조 작성",
+	[Key.aigcAi]: "AI 생성",
+	[Key.aigcHuman]: "인간 작성",
+	[Key.pinned]: "고정",
 };

@@ -37,4 +37,9 @@ export const vi: Translation = {
 	[Key.license]: "Giấy phép bản quyền",
 	[Key.friends]: "Bạn bè",
 	[Key.bangumi]: "Bangumi",
+	[Key.aigcLabel]: "Phương thức sáng tạo",
+	[Key.aigcAssisted]: "Hỗ trợ bởi AI",
+	[Key.aigcAi]: "Tạo bởi AI",
+	[Key.aigcHuman]: "Viết bởi con người",
+	[Key.pinned]: "Ghim",
 };

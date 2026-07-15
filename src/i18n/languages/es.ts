@@ -37,4 +37,9 @@ export const es: Translation = {
 	[Key.license]: "Licencia",
 	[Key.friends]: "Amigos",
 	[Key.bangumi]: "Bangumi",
+	[Key.aigcLabel]: "Método de creación",
+	[Key.aigcAssisted]: "Asistido por IA",
+	[Key.aigcAi]: "Generado por IA",
+	[Key.aigcHuman]: "Escrito por humano",
+	[Key.pinned]: "Fijado",
 };

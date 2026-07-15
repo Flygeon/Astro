@@ -5,8 +5,10 @@ import { Icon } from "astro-icon/components";
 <!-- There can't be a filter on parent element, or it will break `fixed` -->
 <div class="back-to-top-wrapper hidden lg:block">
     <div id="back-to-top-btn" class="back-to-top-btn hide flex items-center rounded-2xl overflow-hidden transition" onclick="backToTop()">
-        <button aria-label="Back to Top" class="btn-card h-[3.75rem] w-[3.75rem]">
-            <Icon name="material-symbols:keyboard-arrow-up-rounded" class="mx-auto"></Icon>
+        <button aria-label="Back to Top" class="btn-card relative h-[3.75rem] w-[3.75rem] overflow-hidden">
+            <div id="back-to-top-liquid" class="liquid-wrap" aria-hidden="true"></div>
+            <span id="back-to-top-pct" class="progress-pct text-sm font-bold leading-none">0%</span>
+            <Icon id="back-to-top-arrow" name="material-symbols:keyboard-arrow-up-rounded" class="complete-arrow text-[2rem]"></Icon>
         </button>
     </div>
 </div>
@@ -19,6 +21,8 @@ import { Icon } from "astro-icon/components";
     right: 0
     top: 0
     pointer-events: none
+    &.force-hidden
+        display: none !important
 
 .back-to-top-btn
     color: var(--primary)
@@ -31,19 +35,117 @@ import { Icon } from "astro-icon/components";
     cursor: pointer
     transform: translateX(5rem)
     pointer-events: auto
-    i
-        font-size: 1.75rem
     &.hide
         transform: translateX(5rem) scale(0.9)
         opacity: 0
         pointer-events: none
     &:active
-      transform: translateX(5rem) scale(0.9)
+        transform: translateX(5rem) scale(0.9)
+    &.is-complete
+        .liquid-wrap, .progress-pct
+            display: none
+        .complete-arrow
+            display: block
+    .complete-arrow
+        display: none
 
+.liquid-wrap
+    position: absolute
+    left: 0
+    right: 0
+    bottom: 0
+    height: 100%
+    background: var(--primary)
+    opacity: 0.16
+    transform: translateY(100%)
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1)
+    pointer-events: none
+
+.progress-pct
+    position: relative
+    z-index: 1
 </style>
 
-<script is:raw is:inline>
+<script is:inline>
 function backToTop() {
     window.scroll({ top: 0, behavior: 'smooth' });
 }
+
+(function () {
+    let pct = null;
+    let liquid = null;
+    let btn = null;
+    let wrapper = null;
+
+    function isArticlePage() {
+        return /\/posts\/.+/.test(location.pathname);
+    }
+
+    function updateVisibility() {
+        wrapper = wrapper || document.querySelector('.back-to-top-wrapper');
+        if (!wrapper) return;
+        if (isArticlePage()) {
+            wrapper.classList.remove('force-hidden');
+        } else {
+            wrapper.classList.add('force-hidden');
+        }
+    }
+
+    function updateProgress() {
+        if (!isArticlePage()) return;
+        pct = pct || document.getElementById('back-to-top-pct');
+        liquid = liquid || document.getElementById('back-to-top-liquid');
+        btn = btn || document.getElementById('back-to-top-btn');
+        if (!pct || !liquid || !btn) return;
+
+        const doc = document.documentElement;
+        const scrollTop = doc.scrollTop || document.body.scrollTop;
+        const max = doc.scrollHeight - window.innerHeight;
+        const ratio = max > 0 ? Math.min(1, Math.max(0, scrollTop / max)) : 0;
+
+        pct.textContent = Math.round(ratio * 100) + '%';
+        liquid.style.transform = 'translateY(' + ((1 - ratio) * 100) + '%)';
+
+        if (ratio >= 0.999) {
+            btn.classList.add('is-complete');
+        } else {
+            btn.classList.remove('is-complete');
+        }
+    }
+
+    let ticking = false;
+    function onScroll() {
+        if (!ticking) {
+            ticking = true;
+            requestAnimationFrame(() => {
+                updateProgress();
+                ticking = false;
+            });
+        }
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => {
+            updateVisibility();
+            updateProgress();
+        });
+    } else {
+        updateVisibility();
+        updateProgress();
+    }
+
+    if (window?.swup?.hooks) {
+        window.swup.hooks.on('page:view', () => {
+            pct = null;
+            liquid = null;
+            btn = null;
+            wrapper = null;
+            updateVisibility();
+            updateProgress();
+        });
+    }
+})();
 </script>
