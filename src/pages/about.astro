@@ -5,6 +5,9 @@ import Markdown from "@components/misc/Markdown.astro";
 import I18nKey from "../i18n/i18nKey";
 import { i18n } from "../i18n/translation";
 import MainGridLayout from "../layouts/MainGridLayout.astro";
+import AboutStatistics from "../components/AboutStatistics.astro";
+import ContributionHeatmap from "../components/ContributionHeatmap.astro";
+import { getSiteStatistics } from "../utils/content-utils";
 
 const aboutPost = await getEntry("spec", "about");
 
@@ -13,13 +16,18 @@ if (!aboutPost) {
 }
 
 const { Content } = await render(aboutPost);
+const stats = await getSiteStatistics();
 ---
 <MainGridLayout title={i18n(I18nKey.about)} description={i18n(I18nKey.about)}>
-    <div class="flex w-full rounded-[var(--radius-large)] overflow-hidden relative min-h-32">
-        <div class="card-base z-10 px-9 py-6 relative w-full ">
-            <Markdown class="mt-2">
-                <Content />
-            </Markdown>
+    <div class="flex flex-col gap-4">
+        <div class="flex w-full rounded-[var(--radius-large)] overflow-hidden relative min-h-32">
+            <div class="card-base z-10 px-9 py-6 relative w-full ">
+                <Markdown class="mt-2">
+                    <Content />
+                </Markdown>
+            </div>
         </div>
+        <AboutStatistics stats={stats} />
+        <ContributionHeatmap activity={stats.activity} />
     </div>
 </MainGridLayout>

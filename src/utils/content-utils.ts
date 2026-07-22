@@ -119,3 +119,84 @@ export async function getCategoryList(): Promise<Category[]> {
 	}
 	return ret;
 }
+
+export type ActivityDay = {
+	date: string;
+	count: number;
+	titles: string[];
+};
+
+export type SiteStatistics = {
+	postCount: number;
+	categoryCount: number;
+	tagCount: number;
+	totalWords: number;
+	firstPublishedAt: Date | null;
+	lastActivityAt: Date | null;
+	categoryDetails: Category[];
+	tagDetails: Tag[];
+	activity: ActivityDay[];
+};
+
+function dateKey(date: Date): string {
+	return date.toISOString().slice(0, 10);
+}
+
+export async function getSiteStatistics(): Promise<SiteStatistics> {
+	const posts = await getCollection("posts", ({ data }) =>
+		import.meta.env.PROD ? data.draft !== true : true,
+	);
+	const activityMap = new Map<string, ActivityDay>();
+	let totalWords = 0;
+	let firstPublishedAt: Date | null = null;
+	let lastActivityAt: Date | null = null;
+
+	for (const post of posts) {
+		const { remarkPluginFrontmatter } = await post.render();
+		totalWords += Number(remarkPluginFrontmatter.words ?? 0);
+		const publishedAt = new Date(post.data.published);
+		const updatedAt = post.data.updated ? new Date(post.data.updated) : null;
+		if (!firstPublishedAt || publishedAt < firstPublishedAt)
+			firstPublishedAt = publishedAt;
+		const activityDates = [publishedAt, ...(updatedAt ? [updatedAt] : [])];
+		for (const date of activityDates) {
+			const key = dateKey(date);
+			const day = activityMap.get(key) ?? { date: key, count: 0, titles: [] };
+			if (!day.titles.includes(post.data.title)) {
+				day.count += 1;
+				day.titles.push(post.data.title);
+			}
+			activityMap.set(key, day);
+		}
+		if (!lastActivityAt || publishedAt > lastActivityAt)
+			lastActivityAt = publishedAt;
+		if (updatedAt && updatedAt > lastActivityAt) lastActivityAt = updatedAt;
+	}
+
+	const categoryDetails = await getCategoryList();
+	const tagDetails = await getTagList();
+	const today = new Date();
+	const start = new Date(today);
+	start.setDate(today.getDate() - 364);
+	const activity: ActivityDay[] = [];
+	for (
+		let date = new Date(start);
+		date <= today;
+		date.setDate(date.getDate() + 1)
+	) {
+		const key = dateKey(date);
+		activity.push(activityMap.get(key) ?? { date: key, count: 0, titles: [] });
+	}
+
+	return {
+		postCount: posts.length,
+		categoryCount: categoryDetails.length,
+		tagCount: tagDetails.length,
+		totalWords,
+		firstPublishedAt,
+		lastActivityAt,
+		categoryDetails,
+		tagDetails,
+		activity,
+	};
+}

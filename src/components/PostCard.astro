@@ -47,7 +47,7 @@ const { remarkPluginFrontmatter } = await entry.render();
 const postPath = url.replace(/\/$/, "");
 ---
 <div class:list={["card-base group flex flex-col-reverse md:flex-row w-full rounded-[var(--radius-large)] overflow-hidden relative", className]} style={style}>
-    <div class:list={["pl-6 md:pl-9 pr-6 md:pr-2 pt-6 md:pt-7 pb-6 relative", {"w-full md:w-[calc(100%_-_52px_-_12px)]": !hasCover, "w-full md:w-[calc(100%_-_var(--coverWidth)_-_12px)]": hasCover}]}>
+    <div class:list={["post-content pl-6 md:pl-9 pr-6 md:pr-2 pt-6 md:pt-7 pb-6 relative", {"w-full md:w-[calc(100%_-_52px_-_12px)]": !hasCover, "w-full md:w-[calc(100%_-_var(--coverWidth)_-_12px)]": hasCover}]}> 
         <div class="flex items-center mb-3">
             {pinned && <div class="meta-icon mr-3 bg-[var(--primary)] text-white shadow-sm transition-transform group-hover:scale-105">
                 <Icon name="mdi:pin" class="text-xl" />
@@ -104,7 +104,7 @@ const postPath = url.replace(/\/$/, "");
     </div>
 
     {hasCover && <a href={url} aria-label={title}
-                    class:list={["group",
+                    class:list={["post-cover group",
                         "mx-4 mt-4 -mb-2 md:mb-0 md:mx-0 md:mt-0 md:mr-3",
                         "md:w-[var(--coverWidth)] relative md:self-center rounded-xl overflow-hidden active:scale-95 flex-shrink-0"
                     ]} >
@@ -119,20 +119,33 @@ const postPath = url.replace(/\/$/, "");
         </ImageWrapper>
     </a>}
 
-    {!hasCover &&
-        <a href={url} aria-label={title} class="!hidden md:!flex btn-regular w-[3.25rem]
-         absolute right-3 top-3 bottom-3 rounded-xl bg-[var(--enter-btn-bg)]
-         hover:bg-[var(--enter-btn-bg-hover)] active:bg-[var(--enter-btn-bg-active)] active:scale-95
-        ">
+    <a href={url} aria-label={title} class:list={[
+         "post-enter btn-regular w-[3.25rem]",
+         "absolute right-3 top-3 bottom-3 rounded-xl bg-[var(--enter-btn-bg)]",
+         "hover:bg-[var(--enter-btn-bg-hover)] active:bg-[var(--enter-btn-bg-active)] active:scale-95",
+         {"post-enter-has-cover": hasCover}]}>
             <Icon name="material-symbols:chevron-right-rounded"
                   class="transition text-[var(--primary)] text-4xl mx-auto">
             </Icon>
-        </a>
-    }
+    </a>
 </div>
 <div class="transition border-t-[1px] border-dashed mx-6 border-black/10 dark:border-white/[0.15] last:border-t-0 md:hidden"></div>
 
 <style define:vars={{coverWidth}}>
+    .post-enter {
+        display: none;
+    }
+
+    @media (min-width: 768px) {
+        .post-enter:not(.post-enter-has-cover) {
+            display: flex;
+        }
+
+        :global(html[data-post-layout="double"]) .post-enter {
+            display: flex;
+        }
+    }
+
     /* 文章标题悬浮动画 - 参考 leehenry.top */
     .post-title-link {
         text-decoration: none;

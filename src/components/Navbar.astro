@@ -11,6 +11,15 @@ import NavMenuPanel from "./widget/NavMenuPanel.astro";
 
 const className = Astro.props.class;
 
+const navIcons: Record<string, string> = {
+	"/": "material-symbols:home-outline-rounded",
+	"/archive/": "material-symbols:inventory-2-outline-rounded",
+	"/about/": "material-symbols:person-outline-rounded",
+	"/friends/": "material-symbols:groups-outline-rounded",
+	"/bangumi/": "material-symbols:movie-outline-rounded",
+	"https://github.com/Flygeon": "fa6-brands:github",
+};
+
 let links: NavBarLink[] = navBarConfig.links.map(
 	(item: NavBarLink | LinkPreset): NavBarLink => {
 		if (typeof item === "number") {
@@ -24,37 +33,43 @@ let links: NavBarLink[] = navBarConfig.links.map(
     <div class="absolute h-8 left-0 right-0 -top-8 transition" style="background: color-mix(in srgb, var(--card-bg) 75%, transparent)"></div> <!-- used for onload animation -->
     <div class:list={[
         className,
-        "card-base !overflow-visible max-w-[var(--page-width)] h-[4.5rem] !rounded-t-none mx-auto flex items-center justify-between px-4"]}
+        "card-base !overflow-visible max-w-[var(--page-width)] h-[4.5rem] !rounded-t-none mx-auto grid grid-cols-[auto_1fr_auto] md:grid-cols-[1fr_auto_1fr] items-center px-3 sm:px-4"]}
         style="background: color-mix(in srgb, var(--card-bg) 75%, transparent)">
-        <a href={url('/')} class="btn-plain scale-animation rounded-lg h-[3.25rem] px-5 font-bold active:scale-95">
+        <a href={url('/')} aria-label={siteConfig.title} class="justify-self-start btn-plain scale-animation rounded-lg h-[3.25rem] px-5 font-bold active:scale-95">
             <div class="flex flex-row text-[var(--primary)] items-center text-md">
                 <Icon name="material-symbols:home-outline-rounded" class="text-[1.75rem] mb-1 mr-2" />
                 {siteConfig.title}
             </div>
         </a>
-        <div class="hidden md:flex">
+        <div class="hidden md:flex justify-self-center gap-2">
             {links.map((l) => {
                 return <a aria-label={l.name} href={l.external ? l.url : url(l.url)} target={l.external ? "_blank" : null}
-                          class="btn-plain scale-animation rounded-lg h-11 font-bold px-5 active:scale-95"
+                          class="navbar-icon-button btn-plain scale-animation rounded-lg h-11 font-bold px-3 active:scale-95"
                 >
                     <div class="flex items-center">
-                        {l.name}
-                        {l.external && <Icon name="fa6-solid:arrow-up-right-from-square" class="text-[0.875rem] transition -translate-y-[1px] ml-1 text-black/[0.2] dark:text-white/[0.2]"></Icon>}
+                        <Icon name={navIcons[l.url] ?? "material-symbols:link-rounded"} class="text-[1.25rem] shrink-0" />
+                        <span class="navbar-icon-button-label">{l.name}</span>
+                        {l.external && <Icon name="fa6-solid:arrow-up-right-from-square" class="navbar-icon-button-external text-[0.75rem] shrink-0 text-black/[0.2] dark:text-white/[0.2]"></Icon>}
                     </div>
                 </a>;
             })}
         </div>
-        <div class="flex">
+        <div class="flex justify-self-end gap-1">
             <!--<SearchPanel client:load>-->
             <Search client:only="svelte"></Search>
+            <button aria-label="Switch to double-column layout" title="Switch to double-column layout" class="btn-plain scale-animation rounded-lg w-11 h-11 active:scale-90" id="post-layout-switch" aria-pressed="false">
+                <Icon name="material-symbols:view-module-outline-rounded" class="post-layout-icon-double text-[1.25rem]"></Icon>
+                <Icon name="material-symbols:view-list-outline-rounded" class="post-layout-icon-single hidden text-[1.25rem]"></Icon>
+            </button>
             {!siteConfig.themeColor.fixed && (
-                    <button aria-label="Display Settings" class="btn-plain scale-animation rounded-lg h-11 w-11 active:scale-90" id="display-settings-switch">
+                    <button aria-label="Display Settings" class="btn-plain scale-animation rounded-lg w-11 h-11 active:scale-90" id="display-settings-switch">
                         <Icon name="material-symbols:palette-outline" class="text-[1.25rem]"></Icon>
                     </button>
             )}
             <LightDarkSwitch client:only="svelte"></LightDarkSwitch>
-            <button aria-label="Menu" name="Nav Menu" class="btn-plain scale-animation rounded-lg w-11 h-11 active:scale-90 md:!hidden" id="nav-menu-switch">
+            <button aria-label="Menu" name="Nav Menu" class="navbar-icon-button btn-plain scale-animation rounded-lg px-3 h-11 active:scale-90 md:!hidden" id="nav-menu-switch">
                 <Icon name="material-symbols:menu-rounded" class="text-[1.25rem]"></Icon>
+                <span class="navbar-icon-button-label">Menu</span>
             </button>
         </div>
         <NavMenuPanel links={links}></NavMenuPanel>
@@ -63,21 +78,30 @@ let links: NavBarLink[] = navBarConfig.links.map(
 </div>
 
 <script>
-function switchTheme() {
-    if (localStorage.theme === 'dark') {
-        document.documentElement.classList.remove('dark');
-        localStorage.theme = 'light';
-    } else {
-        document.documentElement.classList.add('dark');
-        localStorage.theme = 'dark';
-    }
-}
-
 function loadButtonScript() {
-    let switchBtn = document.getElementById("scheme-switch");
-    if (switchBtn) {
-        switchBtn.onclick = function () {
-            switchTheme()
+    const layoutButton = document.getElementById("post-layout-switch");
+    const layout = localStorage.getItem("post-layout") === "double" ? "double" : "single";
+    document.documentElement.dataset.postLayout = layout;
+    if (layoutButton) {
+        const updateLayoutButton = (currentLayout) => {
+            const isDouble = currentLayout === "double";
+            layoutButton.setAttribute("aria-pressed", String(isDouble));
+            layoutButton.setAttribute("aria-label", isDouble ? "Switch to single-column layout" : "Switch to double-column layout");
+            layoutButton.setAttribute("title", isDouble ? "Switch to single-column layout" : "Switch to double-column layout");
+            layoutButton.querySelector(".post-layout-icon-double")?.classList.toggle("hidden", isDouble);
+            layoutButton.querySelector(".post-layout-icon-single")?.classList.toggle("hidden", !isDouble);
+        };
+        updateLayoutButton(layout);
+        layoutButton.onclick = function () {
+            const nextLayout = document.documentElement.dataset.postLayout === "double" ? "single" : "double";
+            const postList = document.getElementById("post-list");
+            postList?.classList.add("layout-switching");
+            requestAnimationFrame(() => {
+                document.documentElement.dataset.postLayout = nextLayout;
+                localStorage.setItem("post-layout", nextLayout);
+                updateLayoutButton(nextLayout);
+                window.setTimeout(() => postList?.classList.remove("layout-switching"), 320);
+            });
         };
     }
 

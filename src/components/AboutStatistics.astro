@@ -1,0 +1,35 @@
+---
+import { Icon } from "astro-icon/components";
+import type { SiteStatistics } from "../utils/content-utils";
+
+interface Props {
+	stats: SiteStatistics;
+}
+
+const { stats } = Astro.props;
+const formatDate = (date: Date | null) => date ? date.toLocaleDateString("zh-CN") : "暂无";
+const startDate = stats.firstPublishedAt?.getTime() ?? Date.now();
+---
+<section class="space-y-4" aria-label="网站数据统计">
+    <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+        <div class="about-stat-card card-base"><div class="about-stat-summary"><Icon name="material-symbols:article-outline" /><strong>{stats.postCount}</strong><span>文章</span></div></div>
+        <div class="about-stat-card card-base"><div class="about-stat-summary"><Icon name="material-symbols:category-outline" /><strong>{stats.categoryCount}</strong><span>分类</span></div></div>
+        <div class="about-stat-card card-base"><div class="about-stat-summary"><Icon name="material-symbols:label-outline" /><strong>{stats.tagCount}</strong><span>标签</span></div></div>
+        <div class="about-stat-card card-base"><div class="about-stat-summary"><Icon name="material-symbols:text-fields" /><strong>{stats.totalWords.toLocaleString()}</strong><span>总字数</span></div></div>
+        <div class="about-stat-card card-base"><div class="about-stat-summary"><Icon name="material-symbols:calendar-month-outline" /><strong id="site-runtime" data-start={startDate}>计算中</strong><span>运行时长</span></div></div>
+        <div class="about-stat-card card-base"><div class="about-stat-summary"><Icon name="material-symbols:update" /><strong>{formatDate(stats.lastActivityAt)}</strong><span>最后活动</span></div></div>
+    </div>
+    <script is:inline>
+        const runtime = document.querySelector("#site-runtime");
+        if (runtime) {
+            const updateRuntime = () => {
+                const elapsed = Math.max(0, Date.now() - Number(runtime.dataset.start));
+                const days = Math.floor(elapsed / 86400000);
+                const hours = Math.floor((elapsed % 86400000) / 3600000);
+                runtime.textContent = `${days}天 ${hours}小时`;
+            };
+            updateRuntime();
+            setInterval(updateRuntime, 3600000);
+        }
+    </script>
+</section>

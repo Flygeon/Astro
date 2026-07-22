@@ -1,0 +1,48 @@
+---
+import type { ActivityDay } from "../utils/content-utils";
+
+interface Props {
+	activity: ActivityDay[];
+}
+
+const { activity } = Astro.props;
+const currentMonth = new Date().toISOString().slice(0, 7);
+const monthActivity = activity.filter((day) => day.date.startsWith(currentMonth));
+const buildWeeks = (days: ActivityDay[]) => {
+    const result: ActivityDay[][] = [];
+    for (let index = 0; index < days.length; index += 7) result.push(days.slice(index, index + 7));
+    return result;
+};
+const yearWeeks = buildWeeks(activity);
+const monthWeeks = buildWeeks(monthActivity);
+const maxCount = (days: ActivityDay[]) => Math.max(1, ...days.map((day) => day.count));
+const level = (count: number, max: number) => count === 0 ? 0 : Math.min(4, Math.ceil((count / max) * 4));
+const tooltip = (day: ActivityDay) => `${day.date} · ${day.count}篇文章${day.titles.length ? ` · ${day.titles.join("、")}` : ""}`;
+---
+<section class="card-base p-4 sm:p-6" aria-label="文章活跃热力图">
+    <div class="mb-4 flex items-center justify-between gap-4">
+        <div>
+            <h2 class="about-heatmap-title text-lg font-bold">文章活跃热力图</h2>
+            <p class="about-heatmap-muted text-sm">按日期查看文章发布与更新的活跃度</p>
+        </div>
+        <div class="flex items-center gap-2">
+            <div class="about-heatmap-toggle flex items-center gap-1" role="tablist" aria-label="热力图时间范围">
+                <button type="button" class="heatmap-toggle btn-plain rounded-lg px-2 py-1 text-xs" data-range="month" aria-selected="false">月</button>
+                <button type="button" class="heatmap-toggle btn-plain rounded-lg px-2 py-1 text-xs" data-range="year" aria-selected="true">年</button>
+            </div>
+            <div class="about-heatmap-muted hidden items-center gap-1 text-xs sm:flex"><span>少</span>{[0,1,2,3,4].map((item) => <span class={`heatmap-cell level-${item}`} aria-hidden="true"></span>)}<span>多</span></div>
+        </div>
+    </div>
+    <div class="heatmap-panel" data-range="month" hidden><div class="overflow-x-auto pb-1"><div class="heatmap-grid" style={`--heatmap-weeks: ${monthWeeks.length}`}>{monthWeeks.map((week) => <div class="heatmap-week">{week.map((day) => <span class={`heatmap-cell level-${level(day.count, maxCount(monthActivity))}`} title={tooltip(day)} tabindex="0" aria-label={tooltip(day)}></span>)}</div>)}</div></div></div>
+    <div class="heatmap-panel" data-range="year"><div class="overflow-x-auto pb-1"><div class="heatmap-grid" style={`--heatmap-weeks: ${yearWeeks.length}`}>{yearWeeks.map((week) => <div class="heatmap-week">{week.map((day) => <span class={`heatmap-cell level-${level(day.count, maxCount(activity))}`} title={tooltip(day)} tabindex="0" aria-label={tooltip(day)}></span>)}</div>)}</div></div></div>
+    <script is:inline>
+        const toggles = document.querySelectorAll(".heatmap-toggle");
+        const panels = document.querySelectorAll(".heatmap-panel");
+        toggles.forEach((toggle) => toggle.addEventListener("click", () => {
+            const range = toggle.getAttribute("data-range");
+            if (!range) return;
+            toggles.forEach((item) => item.setAttribute("aria-selected", String(item.getAttribute("data-range") === range)));
+            panels.forEach((panel) => panel.toggleAttribute("hidden", panel.getAttribute("data-range") !== range));
+        }));
+    </script>
+</section>
