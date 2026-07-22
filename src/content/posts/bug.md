@@ -17,7 +17,7 @@ pinned: false
 
 ## 一阶：无法修复？
 
-![image.webp](blob:https:/app.pagescms.org/e546be00-ab8a-4a9e-9f15-22fddfdd2aa7)
+![](https://raw.flygeon.eu.org/Flygeon/Astro/refs/heads/main/image/image.webp)
 
 经过unjal的严肃修复（调戏ds和Gemini），发现问题仍然存在且仅限我的电脑存在，我就要来了anvigation的源码进行排查，但经过 GPT 老师的身形调教之后，问题不能说一点没解决吧，但只能说解决了一点，导航栏一共 4 个按钮，位于偏右侧的两个按钮可以正常展开，但左侧两个按钮仍未展开。经过我的追问，这个问题始终得不到任何进展。问题到这里似乎陷入了停滞，那么真凶到底是谁呢？
 
