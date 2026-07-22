@@ -2,6 +2,7 @@
 title: 记一次导航栏栏无法展开二级菜单的bug修复
 published: 2026-07-22
 description: 屎山代码发力了，排查半天发现压根不是导航栏的问题，真凶另有其人
+image: https://raw.flygeon.eu.org/flygeon/astro/refs/heads/main/image/image.webp
 tags:
   - BUG
   - 博客
