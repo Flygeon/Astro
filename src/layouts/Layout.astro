@@ -381,8 +381,25 @@ function init() {
 	showBanner();
 }
 
+function updateSiteRuntime() {
+	document.querySelectorAll("[data-running-time], #site-runtime").forEach((element) => {
+		const start = Number(element.getAttribute("data-start"));
+		if (!Number.isFinite(start)) return;
+		const elapsed = Math.max(0, Date.now() - start);
+		const days = Math.floor(elapsed / 86400000);
+		const hours = Math.floor((elapsed % 86400000) / 3600000);
+		const minutes = Math.floor((elapsed % 3600000) / 60000);
+		element.textContent = element.hasAttribute("data-running-time")
+			? `📌本站已稳定运行: ${days}天${hours}小时${minutes}分`
+			: `${days}天 ${hours}小时`;
+	});
+}
+
 /* Load settings when entering the site */
 init();
+updateSiteRuntime();
+window.clearInterval(window.__siteRuntimeTimer);
+window.__siteRuntimeTimer = window.setInterval(updateSiteRuntime, 60000);
 
 const setup = () => {
 	// TODO: temp solution to change the height of the banner
@@ -429,7 +446,7 @@ const setup = () => {
 		// increase the page height during page transition to prevent the scrolling animation from jumping
 		const heightExtend = document.getElementById('page-height-extend')
 		if (heightExtend) {
-			heightExtend.classList.remove('hidden')
+			heightExtend.classList.add('hidden')
 		}
 
 		// Hide the TOC while scrolling back to top
@@ -439,6 +456,7 @@ const setup = () => {
 		}
 	});
 	window.swup.hooks.on('page:view', () => {
+		updateSiteRuntime()
 		// hide the temp high element when the transition is done
 		const heightExtend = document.getElementById('page-height-extend')
 		if (heightExtend) {

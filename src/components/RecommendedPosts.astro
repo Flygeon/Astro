@@ -1,0 +1,68 @@
+---
+import { Icon } from "astro-icon/components";
+import type { CollectionEntry } from "astro:content";
+import { getPostUrlBySlug } from "../utils/url-utils";
+
+interface Props {
+	relatedPosts: CollectionEntry<"posts">[];
+	randomPosts: CollectionEntry<"posts">[];
+}
+
+const { relatedPosts, randomPosts } = Astro.props;
+
+const renderPost = (post: CollectionEntry<"posts">, index: number) => ({
+	post,
+	index,
+	url: getPostUrlBySlug(post.slug),
+});
+
+const relatedItems = relatedPosts.map(renderPost);
+const randomItems = randomPosts.map(renderPost);
+---
+{(relatedItems.length > 0 || randomItems.length > 0) && <section class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-5" aria-label="文章推荐">
+    {relatedItems.length > 0 && <div class="card-base p-4 md:p-5">
+        <div class="flex items-center justify-between gap-2 pb-3 mb-1 border-b border-black/10 dark:border-white/10">
+            <div class="flex items-center gap-2">
+                <Icon name="material-symbols:hub" class="text-2xl text-[var(--primary)]" />
+                <h2 class="text-xl font-bold text-90">相关文章</h2>
+            </div>
+            <span class="rounded-full px-2.5 py-0.5 text-xs text-[var(--primary)] bg-[var(--primary-soft)]">智能推荐</span>
+        </div>
+        <div>
+            {relatedItems.map(({ post, index, url }) => <a href={url} class="group flex items-center gap-2.5 py-3 border-b border-dashed border-black/10 dark:border-white/10 last:border-b-0" aria-label={`阅读文章：${post.data.title}`}>
+                <span class="shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-lg font-bold text-[var(--primary)] bg-[var(--primary-soft)]">{index + 1}</span>
+                <div class="min-w-0 flex-1">
+                    <h3 class="font-bold text-90 truncate group-hover:text-[var(--primary)]">{post.data.title}</h3>
+                    <div class="flex items-center gap-1.5 mt-1 text-sm text-50 truncate">
+                        <span class="shrink-0 rounded-md px-2 py-0.5 bg-black/5 dark:bg-white/10">{post.data.category || "未分类"}</span>
+                        <span class="truncate">{post.data.description || "继续阅读这篇文章"}</span>
+                    </div>
+                </div>
+                <Icon name="material-symbols:chevron-right-rounded" class="shrink-0 text-2xl text-50 transition-transform group-hover:translate-x-1 group-hover:text-[var(--primary)]" />
+            </a>)}
+        </div>
+    </div>}
+
+    {randomItems.length > 0 && <div class="card-base p-4 md:p-5">
+        <div class="flex items-center justify-between gap-2 pb-3 mb-1 border-b border-black/10 dark:border-white/10">
+            <div class="flex items-center gap-2">
+                <Icon name="material-symbols:thumb-up-rounded" class="text-2xl text-[var(--primary)]" />
+                <h2 class="text-xl font-bold text-90">随机文章</h2>
+            </div>
+            <span class="rounded-full px-2.5 py-0.5 text-xs text-[var(--primary)] bg-[var(--primary-soft)]">随机推荐</span>
+        </div>
+        <div>
+            {randomItems.map(({ post, index, url }) => <a href={url} class="group flex items-center gap-2.5 py-3 border-b border-dashed border-black/10 dark:border-white/10 last:border-b-0" aria-label={`阅读文章：${post.data.title}`}>
+                <span class="shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-lg font-bold text-[var(--primary)] bg-[var(--primary-soft)]">{index + 1}</span>
+                <div class="min-w-0 flex-1">
+                    <h3 class="font-bold text-90 truncate group-hover:text-[var(--primary)]">{post.data.title}</h3>
+                    <div class="flex items-center gap-1.5 mt-1 text-sm text-50 truncate">
+                        <span class="shrink-0 rounded-md px-2 py-0.5 bg-black/5 dark:bg-white/10">{post.data.category || "未分类"}</span>
+                        <span class="truncate">{post.data.description || "发现另一篇文章"}</span>
+                    </div>
+                </div>
+                <Icon name="material-symbols:chevron-right-rounded" class="shrink-0 text-2xl text-50 transition-transform group-hover:translate-x-1 group-hover:text-[var(--primary)]" />
+            </a>)}
+        </div>
+    </div>}
+</section>}

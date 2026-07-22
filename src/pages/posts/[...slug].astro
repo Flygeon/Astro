@@ -5,7 +5,8 @@ import Markdown from "@components/misc/Markdown.astro";
 import I18nKey from "@i18n/i18nKey";
 import { i18n } from "@i18n/translation";
 import MainGridLayout from "@layouts/MainGridLayout.astro";
-import { getSortedPosts } from "@utils/content-utils";
+import RecommendedPosts from "../../components/RecommendedPosts.astro";
+import { getRandomPosts, getRecommendedPosts, getSortedPosts } from "@utils/content-utils";
 import { getDir, getPostUrlBySlug } from "@utils/url-utils";
 import { Icon } from "astro-icon/components";
 import { licenseConfig } from "src/config";
@@ -23,6 +24,9 @@ export async function getStaticPaths() {
 }
 
 const { entry } = Astro.props;
+const allPosts = await getSortedPosts();
+const relatedPosts = getRecommendedPosts(entry, allPosts, 5);
+const randomPosts = getRandomPosts(entry, allPosts, relatedPosts, 5);
 const { Content, headings } = await entry.render();
 
 const { remarkPluginFrontmatter } = await entry.render();
@@ -149,6 +153,7 @@ const jsonLd = {
             </div>}
         </a>
     </div>
+    <RecommendedPosts relatedPosts={relatedPosts} randomPosts={randomPosts} />
 <script src="https://giscus.app/client.js"
         data-repo="Flygeon/astro"
         data-repo-id="R_kgDOSiC4vw"

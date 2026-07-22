@@ -38,6 +38,69 @@ export async function getSortedPosts() {
 
 	return sorted;
 }
+
+export function getRecommendedPosts(
+	currentPost: CollectionEntry<"posts">,
+	posts: CollectionEntry<"posts">[],
+	limit = 3,
+): CollectionEntry<"posts">[] {
+	const currentTags = new Set(
+		currentPost.data.tags.map((tag) => tag.trim().toLowerCase()),
+	);
+	const currentCategory =
+		currentPost.data.category?.trim().toLowerCase() ?? null;
+	const now = Date.now();
+
+	return posts
+		.filter(
+			(post) => post.slug !== currentPost.slug && post.data.draft !== true,
+		)
+		.map((post) => {
+			const sharedTags = post.data.tags.filter((tag) =>
+				currentTags.has(tag.trim().toLowerCase()),
+			).length;
+			const sameCategory =
+				currentCategory !== null &&
+				post.data.category?.trim().toLowerCase() === currentCategory;
+			const ageInDays = Math.max(
+				0,
+				(now - new Date(post.data.published).getTime()) / 86400000,
+			);
+			const freshness = 30 * Math.exp((-Math.LN2 * ageInDays) / 180);
+			const score = sharedTags * 24 + (sameCategory ? 12 : 0) + freshness;
+
+			return { post, score, sharedTags };
+		})
+		.sort(
+			(a, b) =>
+				b.score - a.score ||
+				new Date(b.post.data.published).getTime() -
+					new Date(a.post.data.published).getTime(),
+		)
+		.sort((a, b) => Number(b.sharedTags > 0) - Number(a.sharedTags > 0))
+		.slice(0, limit)
+		.map(({ post }) => post);
+}
+
+export function getRandomPosts(
+	currentPost: CollectionEntry<"posts">,
+	posts: CollectionEntry<"posts">[],
+	excludedPosts: CollectionEntry<"posts">[] = [],
+	limit = 5,
+): CollectionEntry<"posts">[] {
+	const excluded = new Set([currentPost.slug, ...excludedPosts.map((post) => post.slug)]);
+	let seed = Array.from(currentPost.slug).reduce((value, character) => value * 31 + character.charCodeAt(0), 7);
+
+	return posts
+		.filter((post) => !excluded.has(post.slug) && post.data.draft !== true)
+		.map((post) => {
+			seed = (seed * 9301 + 49297) % 233280;
+			return { post, order: seed / 233280 };
+		})
+		.sort((a, b) => a.order - b.order)
+		.slice(0, limit)
+		.map(({ post }) => post);
+}
 export type PostForList = {
 	slug: string;
 	data: CollectionEntry<"posts">["data"];

@@ -19,17 +19,4 @@ const startDate = stats.firstPublishedAt?.getTime() ?? Date.now();
         <div class="about-stat-card card-base"><div class="about-stat-summary"><Icon name="material-symbols:calendar-month-outline" /><strong id="site-runtime" data-start={startDate}>计算中</strong><span>运行时长</span></div></div>
         <div class="about-stat-card card-base"><div class="about-stat-summary"><Icon name="material-symbols:update" /><strong>{formatDate(stats.lastActivityAt)}</strong><span>最后活动</span></div></div>
     </div>
-    <script is:inline>
-        const runtime = document.querySelector("#site-runtime");
-        if (runtime) {
-            const updateRuntime = () => {
-                const elapsed = Math.max(0, Date.now() - Number(runtime.dataset.start));
-                const days = Math.floor(elapsed / 86400000);
-                const hours = Math.floor((elapsed % 86400000) / 3600000);
-                runtime.textContent = `${days}天 ${hours}小时`;
-            };
-            updateRuntime();
-            setInterval(updateRuntime, 3600000);
-        }
-    </script>
 </section>
