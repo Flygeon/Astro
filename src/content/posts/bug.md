@@ -5,7 +5,7 @@ description: 屎山代码发力了，排查半天发现压根不是导航栏的�
 tags:
   - BUG
   - 博客
-category: 折腾实录
+category: 折腾记录
 draft: false
 updated: 2026-07-22
 pinned: false
