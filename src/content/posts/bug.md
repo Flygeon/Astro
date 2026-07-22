@@ -4,6 +4,8 @@ published: 2026-07-22
 description: 屎山代码发力了，排查半天发现压根不是导航栏的问题，真凶另有其人
 tags:
   - BUG
+  - 博客
+category: 折腾实录
 draft: false
 updated: 2026-07-22
 pinned: false
