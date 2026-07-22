@@ -44,6 +44,11 @@ const jsonLd = {
 	"@type": "BlogPosting",
 	headline: entry.data.title,
 	description: entry.data.description || entry.data.title,
+	url: Astro.url.href,
+	mainEntityOfPage: {
+		"@type": "WebPage",
+		"@id": Astro.url.href,
+	},
 	keywords: entry.data.tags,
 	author: {
 		"@type": "Person",
@@ -51,13 +56,20 @@ const jsonLd = {
 		url: Astro.site,
 	},
 	datePublished: formatDateToYYYYMMDD(entry.data.published),
+	dateModified: formatDateToYYYYMMDD(entry.data.updated ?? entry.data.published),
+	...(entry.data.image && /^https?:\/\//.test(entry.data.image) ? { image: entry.data.image } : {}),
+	...(entry.data.category ? { articleSection: entry.data.category } : {}),
+	publisher: {
+		"@type": "Organization",
+		name: siteConfig.title,
+	},
 	inLanguage: entry.data.lang
 		? entry.data.lang.replace("_", "-")
 		: siteConfig.lang.replace("_", "-"),
 	// TODO include cover image here
 };
 ---
-<MainGridLayout banner={entry.data.image} title={entry.data.title} description={entry.data.description} lang={entry.data.lang} setOGTypeArticle={true} headings={headings}>
+<MainGridLayout banner={entry.data.image} image={entry.data.image} title={entry.data.title} description={entry.data.description || entry.data.title} lang={entry.data.lang} setOGTypeArticle={true} headings={headings}>
     <script is:inline slot="head" type="application/ld+json" set:html={JSON.stringify(jsonLd)}></script>
     <div class="flex w-full rounded-[var(--radius-large)] overflow-hidden relative mb-4">
         <div id="post-container" class:list={["card-base z-10 px-6 md:px-9 pt-6 pb-4 relative w-full ",
@@ -83,7 +95,7 @@ const jsonLd = {
 
             <!-- title -->
             <div class="relative onload-animation">
-                <div
+                <h1
                     data-pagefind-body data-pagefind-weight="10" data-pagefind-meta="title"
                     class="transition w-full block font-bold mb-3
                     text-3xl md:text-[2.25rem]/[2.75rem]
@@ -92,7 +104,7 @@ const jsonLd = {
                     before:absolute before:top-[0.75rem] before:left-[-1.125rem]
                 ">
                     {entry.data.title}
-                </div>
+                </h1>
             </div>
 
             <!-- metadata (含 AIGC 创作标识) -->

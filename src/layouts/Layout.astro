@@ -24,11 +24,12 @@ interface Props {
 	title?: string;
 	banner?: string;
 	description?: string;
+	image?: string;
 	lang?: string;
 	setOGTypeArticle?: boolean;
 }
 
-let { title, banner, description, lang, setOGTypeArticle } = Astro.props;
+let { title, banner, description, image, lang, setOGTypeArticle } = Astro.props;
 
 // apply a class to the body element to decide the height of the banner, only used for initial page load
 // Swup can update the body for each page visit, but it's after the page transition, causing a delay for banner height change
@@ -70,6 +71,8 @@ const bannerOffsetByPosition = {
 };
 const bannerOffset =
 	bannerOffsetByPosition[siteConfig.banner.position || "center"];
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin).href;
+const socialImage = image && /^https?:\/\//.test(image) ? image : undefined;
 ---
 
 <!DOCTYPE html>
@@ -83,11 +86,13 @@ const bannerOffset =
 		<meta charset="UTF-8" />
 		<meta name="description" content={description || pageTitle}>
 		<meta name="author" content={profileConfig.name}>
+		<link rel="canonical" href={canonicalUrl} />
 
 		<meta property="og:site_name" content={siteConfig.title}>
 		<meta property="og:url" content={Astro.url}>
 		<meta property="og:title" content={pageTitle}>
 		<meta property="og:description" content={description || pageTitle}>
+		{socialImage && <meta property="og:image" content={socialImage} />}
 		{setOGTypeArticle ? (
         <meta property="og:type" content="article" />
         ) : (
@@ -98,6 +103,7 @@ const bannerOffset =
 		<meta property="twitter:url" content={Astro.url}>
 		<meta name="twitter:title" content={pageTitle}>
 		<meta name="twitter:description" content={description || pageTitle}>
+		{socialImage && <meta name="twitter:image" content={socialImage} />}
 
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
