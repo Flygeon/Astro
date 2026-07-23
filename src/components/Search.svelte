@@ -128,11 +128,21 @@ onMount(() => {
 		);
 		initializeSearch();
 	} else {
-		document.addEventListener("pagefindready", () => initializeSearch());
-		document.addEventListener("pagefindloaderror", () => initializeSearch());
-		setTimeout(() => {
-			if (!initialized) initializeSearch();
-		}, 2000);
+		const loadPagefind = async () => {
+			try {
+				const pagefindPath = url("/pagefind/pagefind.js");
+				const pagefind = (await import(
+					/* @vite-ignore */ pagefindPath
+				)) as NonNullable<Window["pagefind"]>;
+				await pagefind.init?.();
+				window.pagefind = pagefind;
+			} catch (error) {
+				console.error("Failed to load Pagefind:", error);
+			} finally {
+				initializeSearch();
+			}
+		};
+		loadPagefind();
 	}
 
 	window.addEventListener("keydown", onKeydown);
