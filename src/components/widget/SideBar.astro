@@ -1,12 +1,12 @@
 ---
 import type { MarkdownHeading } from "astro";
+import { url } from "../../utils/url-utils";
 import Categories from "./Categories.astro";
 import Profile from "./Profile.astro";
 import RouteSwitch from "./RouteSwitch.astro";
 import SideBarTOC from "./SideBarTOC.astro";
 import Tag from "./Tags.astro";
 import UmamiStats from "./UmamiStats.astro";
-import { url } from "../../utils/url-utils";
 
 interface Props {
 	class?: string;

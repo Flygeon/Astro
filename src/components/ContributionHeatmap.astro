@@ -7,17 +7,23 @@ interface Props {
 
 const { activity } = Astro.props;
 const currentMonth = new Date().toISOString().slice(0, 7);
-const monthActivity = activity.filter((day) => day.date.startsWith(currentMonth));
+const monthActivity = activity.filter((day) =>
+	day.date.startsWith(currentMonth),
+);
 const buildWeeks = (days: ActivityDay[]) => {
-    const result: ActivityDay[][] = [];
-    for (let index = 0; index < days.length; index += 7) result.push(days.slice(index, index + 7));
-    return result;
+	const result: ActivityDay[][] = [];
+	for (let index = 0; index < days.length; index += 7)
+		result.push(days.slice(index, index + 7));
+	return result;
 };
 const yearWeeks = buildWeeks(activity);
 const monthWeeks = buildWeeks(monthActivity);
-const maxCount = (days: ActivityDay[]) => Math.max(1, ...days.map((day) => day.count));
-const level = (count: number, max: number) => count === 0 ? 0 : Math.min(4, Math.ceil((count / max) * 4));
-const tooltip = (day: ActivityDay) => `${day.date} · ${day.count}篇文章${day.titles.length ? ` · ${day.titles.join("、")}` : ""}`;
+const maxCount = (days: ActivityDay[]) =>
+	Math.max(1, ...days.map((day) => day.count));
+const level = (count: number, max: number) =>
+	count === 0 ? 0 : Math.min(4, Math.ceil((count / max) * 4));
+const tooltip = (day: ActivityDay) =>
+	`${day.date} · ${day.count}篇文章${day.titles.length ? ` · ${day.titles.join("、")}` : ""}`;
 ---
 <section class="card-base p-4 sm:p-6" aria-label="文章活跃热力图">
     <div class="mb-4 flex items-center justify-between gap-4">

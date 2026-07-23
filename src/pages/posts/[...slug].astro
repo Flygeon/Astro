@@ -5,13 +5,17 @@ import Markdown from "@components/misc/Markdown.astro";
 import I18nKey from "@i18n/i18nKey";
 import { i18n } from "@i18n/translation";
 import MainGridLayout from "@layouts/MainGridLayout.astro";
-import RecommendedPosts from "../../components/RecommendedPosts.astro";
-import { getRandomPosts, getRecommendedPosts, getSortedPosts } from "@utils/content-utils";
+import {
+	getRandomPosts,
+	getRecommendedPosts,
+	getSortedPosts,
+} from "@utils/content-utils";
 import { getDir, getPostUrlBySlug } from "@utils/url-utils";
 import { Icon } from "astro-icon/components";
 import { licenseConfig } from "src/config";
 import ImageWrapper from "../../components/misc/ImageWrapper.astro";
 import PostMetadata from "../../components/PostMeta.astro";
+import RecommendedPosts from "../../components/RecommendedPosts.astro";
 import { profileConfig, siteConfig } from "../../config";
 import { formatDateToYYYYMMDD } from "../../utils/date-utils";
 
@@ -33,7 +37,10 @@ const { remarkPluginFrontmatter } = await entry.render();
 
 /* AIGC content disclosure badge */
 const aigcMap = {
-	assisted: { icon: "material-symbols:assistant", label: i18n(I18nKey.aigcAssisted) },
+	assisted: {
+		icon: "material-symbols:assistant",
+		label: i18n(I18nKey.aigcAssisted),
+	},
 	ai: { icon: "material-symbols:auto-awesome", label: i18n(I18nKey.aigcAi) },
 	human: { icon: "material-symbols:person", label: i18n(I18nKey.aigcHuman) },
 } as const;
@@ -56,8 +63,12 @@ const jsonLd = {
 		url: Astro.site,
 	},
 	datePublished: formatDateToYYYYMMDD(entry.data.published),
-	dateModified: formatDateToYYYYMMDD(entry.data.updated ?? entry.data.published),
-	...(entry.data.image && /^https?:\/\//.test(entry.data.image) ? { image: entry.data.image } : {}),
+	dateModified: formatDateToYYYYMMDD(
+		entry.data.updated ?? entry.data.published,
+	),
+	...(entry.data.image && /^https?:\/\//.test(entry.data.image)
+		? { image: entry.data.image }
+		: {}),
 	...(entry.data.category ? { articleSection: entry.data.category } : {}),
 	publisher: {
 		"@type": "Organization",

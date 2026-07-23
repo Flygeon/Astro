@@ -7,7 +7,8 @@ interface Props {
 }
 
 const { stats } = Astro.props;
-const formatDate = (date: Date | null) => date ? date.toLocaleDateString("zh-CN") : "暂无";
+const formatDate = (date: Date | null) =>
+	date ? date.toLocaleDateString("zh-CN") : "暂无";
 const startDate = stats.firstPublishedAt?.getTime() ?? Date.now();
 ---
 <section class="space-y-4" aria-label="网站数据统计">

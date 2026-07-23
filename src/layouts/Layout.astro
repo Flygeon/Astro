@@ -71,7 +71,8 @@ const bannerOffsetByPosition = {
 };
 const bannerOffset =
 	bannerOffsetByPosition[siteConfig.banner.position || "center"];
-const canonicalUrl = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin).href;
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin)
+	.href;
 const socialImage = image && /^https?:\/\//.test(image) ? image : undefined;
 ---
 

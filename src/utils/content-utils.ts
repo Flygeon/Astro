@@ -88,8 +88,14 @@ export function getRandomPosts(
 	excludedPosts: CollectionEntry<"posts">[] = [],
 	limit = 5,
 ): CollectionEntry<"posts">[] {
-	const excluded = new Set([currentPost.slug, ...excludedPosts.map((post) => post.slug)]);
-	let seed = Array.from(currentPost.slug).reduce((value, character) => value * 31 + character.charCodeAt(0), 7);
+	const excluded = new Set([
+		currentPost.slug,
+		...excludedPosts.map((post) => post.slug),
+	]);
+	let seed = Array.from(currentPost.slug).reduce(
+		(value, character) => value * 31 + character.charCodeAt(0),
+		7,
+	);
 
 	return posts
 		.filter((post) => !excluded.has(post.slug) && post.data.draft !== true)
