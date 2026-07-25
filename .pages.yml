@@ -78,3 +78,15 @@ content:
     filename:
       template: "{primary}.md"
       field: title       # 从 frontmatter 的 create 字段取值，注意必须存在且非空
+
+# ========== Actions 配置 - 触发部署 ==========
+actions:
+  # 触发 Astro 主仓库自身的部署
+  - name: deploy-astro
+    label: 部署 Astro 站点
+    workflow: .github/workflows/deploy-astro.yml
+
+  # 触发 profiles 仓库的部署（通过桥梁工作流）
+  - name: deploy-profiles
+    label: 部署 Profiles 站点
+    workflow: .github/workflows/trigger-profiles.yml
