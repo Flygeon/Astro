@@ -22,25 +22,32 @@ async function fetchAllCollections(
 
 	while (true) {
 		const url = `${API_BASE}/users/${BANGUMI_USERNAME}/collections?subject_type=${subjectType}&limit=${PAGE_SIZE}&offset=${offset}`;
-		const res = await fetch(url, {
-			headers: {
-				"User-Agent": "Flygeon/blog (https://flygeon.top)",
-			},
-		});
+		
+		try {
+			const res = await fetch(url, {
+				headers: {
+					"User-Agent": "Flygeon/blog (https://flygeon.top)",
+				},
+				signal: AbortSignal.timeout(10000),
+			});
 
-		if (!res.ok) {
-			console.error(
-				`Failed to fetch bangumi collections: ${res.status} ${res.statusText}`,
-			);
-			break;
-		}
+			if (!res.ok) {
+				console.error(
+					`Failed to fetch bangumi collections: ${res.status} ${res.statusText}`,
+				);
+				break;
+			}
 
-		const data: UserSubjectCollectionResponse = await res.json();
-		allItems.push(...data.data);
-		total = data.total;
-		offset += data.limit;
+			const data: UserSubjectCollectionResponse = await res.json();
+			allItems.push(...data.data);
+			total = data.total;
+			offset += data.limit;
 
-		if (offset >= total) {
+			if (offset >= total) {
+				break;
+			}
+		} catch (error) {
+			console.error(`Error fetching bangumi collections (subject_type=${subjectType}):`, error);
 			break;
 		}
 	}
@@ -48,8 +55,15 @@ async function fetchAllCollections(
 	return allItems;
 }
 
-const animeItems = await fetchAllCollections(2);
-const gameItems = await fetchAllCollections(4);
+let animeItems: UserSubjectCollection[] = [];
+let gameItems: UserSubjectCollection[] = [];
+
+try {
+	animeItems = await fetchAllCollections(2);
+	gameItems = await fetchAllCollections(4);
+} catch (error) {
+	console.error("Failed to fetch bangumi data, using empty fallback:", error);
+}
 
 const sections = [
 	{ id: "anime", label: "动画", items: animeItems },
