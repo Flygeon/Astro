@@ -11,5 +11,5 @@ jobs:
           curl -X POST \
             -H "Accept: application/vnd.github.v3+json" \
             -H "Authorization: token ${{ secrets.PROFILES_REPO_PAT }}" \
-            https://api.github.com/repos/您的用户名/profiles/dispatches \
+            https://api.github.com/repos/Flygeon/profiles/dispatches \
             -d '{"event_type":"deploy-profiles"}'
