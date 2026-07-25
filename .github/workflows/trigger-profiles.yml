@@ -1,8 +1,6 @@
-# Astro 仓库的 .github/workflows/trigger-profiles.yml
 name: Trigger Profiles Deployment
 on:
-  workflow_dispatch: # 允许手动触发，方便测试
-  # 注意：这里不能直接由 Pages CMS 的 action 触发，而是作为桥梁
+  workflow_dispatch:
 
 jobs:
   trigger:
@@ -12,6 +10,6 @@ jobs:
         run: |
           curl -X POST \
             -H "Accept: application/vnd.github.v3+json" \
-            -H "Authorization: token ${{ secrets.PROFILES_REPO_PAT }}" \ # 需要配置 Personal Access Token
-            https://api.github.com/repos/Flygeon/profiles/dispatches \
+            -H "Authorization: token ${{ secrets.PROFILES_REPO_PAT }}" \
+            https://api.github.com/repos/您的用户名/profiles/dispatches \
             -d '{"event_type":"deploy-profiles"}'
