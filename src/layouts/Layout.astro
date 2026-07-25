@@ -148,6 +148,11 @@ const socialImage = image && /^https?:\/\//.test(image) ? image : undefined;
 
 			document.documentElement.dataset.postLayout = localStorage.getItem('post-layout') === 'double' ? 'double' : 'single';
 
+			// Load the banner visibility preference from local storage
+			if (localStorage.getItem('banner-hidden') === 'true') {
+				document.documentElement.classList.add('banner-hidden');
+			}
+
 			// calculate the --banner-height-extend, which needs to be a multiple of 4 to avoid blurry text
 			let offset = Math.floor(window.innerHeight * (BANNER_HEIGHT_EXTEND / 100));
 			offset = offset - offset % 4;
@@ -201,6 +206,19 @@ const socialImage = image && /^https?:\/\//.test(image) ? image : undefined;
 	}
 	.enable-banner.is-home #sidebar-sticky {
 		@apply top-[calc(1rem_-_var(--banner-height-extend))]
+	}
+
+	.banner-hidden #banner-wrapper {
+		display: none !important;
+	}
+	.banner-hidden #main-panel {
+		top: 5.5rem !important;
+	}
+	.banner-hidden #main-grid {
+		transform: translateY(0) !important;
+	}
+	.banner-hidden #sidebar-sticky {
+		top: 1rem !important;
 	}
 }
 </style>
@@ -267,7 +285,7 @@ function disableAnimation() {
 }
 */
 
-const bannerEnabled = !!document.getElementById('banner-wrapper')
+const bannerEnabled = !!document.getElementById('banner-wrapper') && !document.documentElement.classList.contains('banner-hidden')
 
 function setClickOutsideToClose(panel: string, ignores: string[]) {
 	document.addEventListener("click", event => {

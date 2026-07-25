@@ -5,9 +5,11 @@ import { i18n } from "@i18n/translation";
 import Icon from "@iconify/svelte";
 import {
 	applyThemeToDocument,
+	getBannerHidden,
 	getDefaultHue,
 	getHue,
 	getStoredTheme,
+	setBannerHidden,
 	setHue,
 	setTheme,
 } from "@utils/setting-utils";
@@ -19,6 +21,7 @@ const defaultHue = getDefaultHue();
 const modes: LIGHT_DARK_MODE[] = [LIGHT_MODE, DARK_MODE, AUTO_MODE];
 let mode: LIGHT_DARK_MODE = $state(AUTO_MODE);
 let layout = $state<"single" | "double">("single");
+let bannerHidden = $state(false);
 let open = $state(false);
 
 onMount(() => {
@@ -26,6 +29,7 @@ onMount(() => {
 	layout =
 		localStorage.getItem("post-layout") === "double" ? "double" : "single";
 	document.documentElement.dataset.postLayout = layout;
+	bannerHidden = getBannerHidden();
 	const preference = window.matchMedia("(prefers-color-scheme: dark)");
 	const updateTheme = () => applyThemeToDocument(mode);
 	preference.addEventListener("change", updateTheme);
@@ -39,6 +43,11 @@ function resetHue() {
 function switchMode(nextMode: LIGHT_DARK_MODE) {
 	mode = nextMode;
 	setTheme(nextMode);
+}
+
+function toggleBannerHidden() {
+	bannerHidden = !bannerHidden;
+	setBannerHidden(bannerHidden);
 }
 
 function switchLayout() {
@@ -99,6 +108,13 @@ $effect(() => {
                 <span class="flex items-center gap-3">
                     <Icon icon={layout === "double" ? "material-symbols:view-list-outline-rounded" : "material-symbols:view-module-outline-rounded"} class="text-xl"></Icon>
                     {layout === "double" ? "切换为单栏" : "切换为双栏"}
+                </span>
+                <Icon icon="material-symbols:chevron-right-rounded" class="text-lg"></Icon>
+            </button>
+            <button class="flex items-center justify-between w-full btn-plain scale-animation rounded-lg h-11 px-3" onclick={toggleBannerHidden}>
+                <span class="flex items-center gap-3">
+                    <Icon icon={bannerHidden ? "material-symbols:image-outline" : "material-symbols:hide-image-outline"} class="text-xl"></Icon>
+                    {bannerHidden ? "显示头图" : "隐藏头图"}
                 </span>
                 <Icon icon="material-symbols:chevron-right-rounded" class="text-lg"></Icon>
             </button>

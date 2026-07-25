@@ -3,7 +3,7 @@
 import { getEntry, render } from "astro:content";
 import Markdown from "@components/misc/Markdown.astro";
 import AboutStatistics from "../components/AboutStatistics.astro";
-import ContributionHeatmap from "../components/ContributionHeatmap.astro";
+
 import I18nKey from "../i18n/i18nKey";
 import { i18n } from "../i18n/translation";
 import MainGridLayout from "../layouts/MainGridLayout.astro";
@@ -17,6 +17,20 @@ if (!aboutPost) {
 
 const { Content } = await render(aboutPost);
 const stats = await getSiteStatistics();
+const techStacks = [
+	{
+		name: "Astro",
+		description: "现代化的内容驱动型 Web 框架",
+		href: "https://astro.build/",
+		icon: "material-symbols:rocket-launch-outline",
+	},
+	{
+		name: "Fuwari",
+		description: "简洁、优雅的 Astro 博客主题",
+		href: "https://github.com/saicaca/fuwari",
+		icon: "material-symbols:palette-outline",
+	},
+];
 ---
 <MainGridLayout title={i18n(I18nKey.about)} description={i18n(I18nKey.about)}>
     <div class="flex flex-col gap-4">
@@ -27,7 +41,6 @@ const stats = await getSiteStatistics();
                 </Markdown>
             </div>
         </div>
-        <AboutStatistics stats={stats} />
-        <ContributionHeatmap activity={stats.activity} />
+        <AboutStatistics stats={stats} techStacks={techStacks} />
     </div>
 </MainGridLayout>

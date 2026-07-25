@@ -59,3 +59,12 @@ export function setTheme(theme: LIGHT_DARK_MODE): void {
 export function getStoredTheme(): LIGHT_DARK_MODE {
 	return (localStorage.getItem("theme") as LIGHT_DARK_MODE) || DEFAULT_THEME;
 }
+
+export function getBannerHidden(): boolean {
+	return localStorage.getItem("banner-hidden") === "true";
+}
+
+export function setBannerHidden(hidden: boolean): void {
+	localStorage.setItem("banner-hidden", String(hidden));
+	document.documentElement.classList.toggle("banner-hidden", hidden);
+}

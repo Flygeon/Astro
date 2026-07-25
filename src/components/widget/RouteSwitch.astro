@@ -1,5 +1,4 @@
 ---
-import ButtonLink from "../control/ButtonLink.astro";
 import WidgetLayout from "./WidgetLayout.astro";
 
 interface Route {
@@ -23,9 +22,83 @@ const routes: Route[] = [
 ---
 
 <WidgetLayout name="线路切换" id="route-switch" class={className} style={style}>
-	{routes.map((route) =>
-		<ButtonLink url={route.url} label={`切换到 ${route.name} 线路`}>
-			{route.name}
-		</ButtonLink>
-	)}
+	<div class="flex flex-col gap-1">
+		{routes.map((route) =>
+			<a href={route.url} aria-label={`切换到 ${route.name} 线路`} data-route-url={route.url}
+			   class="route-switch-item flex items-center w-full btn-plain scale-animation rounded-lg h-10 px-3
+			          text-neutral-700 hover:text-[var(--primary)] dark:text-neutral-300 dark:hover:text-[var(--primary)]"
+			>
+				<span class="flex-1 min-w-0 overflow-hidden text-left whitespace-nowrap overflow-ellipsis">{route.name}</span>
+				<span class="route-latency-badge shrink-0 ml-2 transition px-2 h-6 w-[3.5rem] rounded-md text-xs font-bold
+				             bg-[var(--btn-regular-bg)] text-[var(--btn-content)] flex items-center justify-center gap-1.5"
+				>
+					<span class="route-latency-dot w-1.5 h-1.5 rounded-full bg-neutral-400 animate-pulse shrink-0"></span>
+					<span class="route-latency-text">检测中</span>
+				</span>
+			</a>
+		)}
+	</div>
 </WidgetLayout>
+
+<script>
+	function formatLatency(ms: number): string {
+		return `${Math.round(ms)}ms`;
+	}
+
+	function classifyLatency(ms: number): { label: string; color: string } {
+		if (ms < 150) return { label: formatLatency(ms), color: "#22c55e" };
+		if (ms < 500) return { label: formatLatency(ms), color: "#eab308" };
+		return { label: formatLatency(ms), color: "#ef4444" };
+	}
+
+	async function measureLatency(url: string): Promise<number | null> {
+		const start = performance.now();
+		try {
+			await fetch(url, {
+				mode: "no-cors",
+				cache: "no-store",
+				signal: AbortSignal.timeout(4000),
+			});
+			return performance.now() - start;
+		} catch {
+			return null;
+		}
+	}
+
+	async function checkRoutes() {
+		const items =
+			document.querySelectorAll<HTMLAnchorElement>(".route-switch-item");
+		await Promise.all(
+			Array.from(items).map(async (item) => {
+				const routeUrl = item.dataset.routeUrl;
+				if (!routeUrl) return;
+				const dot = item.querySelector(".route-latency-dot") as HTMLElement | null;
+				const text = item.querySelector(".route-latency-text") as HTMLElement | null;
+				if (!dot || !text) return;
+
+				const latency = await measureLatency(routeUrl);
+				dot.classList.remove("animate-pulse");
+				if (latency === null) {
+					dot.style.backgroundColor = "#ef4444";
+					text.textContent = "超时";
+				} else {
+					const { label, color } = classifyLatency(latency);
+					dot.style.backgroundColor = color;
+					text.textContent = label;
+				}
+			}),
+		);
+	}
+
+	function setup() {
+		if (document.getElementById("route-switch")) {
+			checkRoutes();
+		}
+	}
+
+	if (document.readyState === "loading") {
+		document.addEventListener("DOMContentLoaded", setup);
+	} else {
+		setup();
+	}
+</script>

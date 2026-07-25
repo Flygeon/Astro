@@ -4,9 +4,15 @@ import type { SiteStatistics } from "../utils/content-utils";
 
 interface Props {
 	stats: SiteStatistics;
+	techStacks: {
+		name: string;
+		description: string;
+		href: string;
+		icon: string;
+	}[];
 }
 
-const { stats } = Astro.props;
+const { stats, techStacks } = Astro.props;
 const formatDate = (date: Date | null) =>
 	date ? date.toLocaleDateString("zh-CN") : "暂无";
 const startDate = stats.firstPublishedAt?.getTime() ?? Date.now();
@@ -19,5 +25,25 @@ const startDate = stats.firstPublishedAt?.getTime() ?? Date.now();
         <div class="about-stat-card card-base"><div class="about-stat-summary"><Icon name="material-symbols:text-fields" /><strong>{stats.totalWords.toLocaleString()}</strong><span>总字数</span></div></div>
         <div class="about-stat-card card-base"><div class="about-stat-summary"><Icon name="material-symbols:calendar-month-outline" /><strong id="site-runtime" data-start={startDate}>计算中</strong><span>运行时长</span></div></div>
         <div class="about-stat-card card-base"><div class="about-stat-summary"><Icon name="material-symbols:update" /><strong>{formatDate(stats.lastActivityAt)}</strong><span>最后活动</span></div></div>
+    </div>
+    <div class="card-base p-4 sm:p-6" aria-label="博客技术栈">
+        <div class="mb-4">
+            <h2 class="about-heatmap-title text-lg font-bold">技术栈</h2>
+            <p class="about-heatmap-muted text-sm">驱动本站构建与呈现的核心项目</p>
+        </div>
+        <div class="grid gap-3 sm:grid-cols-2">
+            {techStacks.map((item) => (
+                <a class="btn-plain group flex items-center gap-4 rounded-xl p-4" href={item.href} target="_blank" rel="noopener noreferrer">
+                    <span class="flex size-12 shrink-0 items-center justify-center rounded-xl bg-[var(--btn-plain-bg-hover)] text-2xl text-[var(--primary)] transition group-hover:scale-105">
+                        <Icon name={item.icon} />
+                    </span>
+                    <span class="min-w-0">
+                        <strong class="block text-base text-[var(--content-text)]">{item.name}</strong>
+                        <span class="about-heatmap-muted block text-sm">{item.description}</span>
+                    </span>
+                    <Icon name="material-symbols:arrow-outward" class="ml-auto shrink-0 text-lg text-[var(--content-muted)] transition group-hover:text-[var(--primary)]" />
+                </a>
+            ))}
+        </div>
     </div>
 </section>
