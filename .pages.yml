@@ -1,4 +1,3 @@
-# .pages.yml
 media:
   input: /image
   output: https://raw.flygeon.eu.org/Flygeon/Astro/refs/heads/main/image/
@@ -56,7 +55,6 @@ content:
         type: boolean
         default: false
 
-      # Fuwari 扩展字段（可选）
       - name: updated
         label: 更新日期
         type: date
@@ -67,28 +65,12 @@ content:
         type: boolean
         default: false
 
-
     view:
       primary: title
       sort: published
       order: desc
       fields: [create, title, published, draft, tags]
 
-    # ---------- 文件名模板：使用 id 字段的值 ----------
     filename:
       template: "{primary}.md"
       field: title
-
-# ========== Actions 配置 - 触发部署 ==========
-actions:
-  # 触发 Astro 主仓库自身的部署
-  - name: deploy-astro
-    label: 部署 Astro 站点
-    workflow: .github/workflows/deploy-astro.yml
-    ref: main
-
-  # 触发 profiles 仓库的部署（通过桥梁工作流）
-  - name: deploy-profiles
-    label: 部署 Profiles 站点
-    workflow: .github/workflows/trigger-profiles.yml
-    ref: main
