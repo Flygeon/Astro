@@ -1,10 +1,11 @@
+# .github/workflows/trigger-profiles-on-push.yml
 name: Trigger Profiles on Push
 on:
   push:
     branches:
-      - main  # 当 main 分支有 push 时触发
+      - main
     paths:
-      - 'src/content/posts/**'  # 仅当文章内容变化时触发，可根据需要调整
+      - 'src/content/posts/**'
 
 jobs:
   trigger-profiles:
@@ -13,9 +14,15 @@ jobs:
       - name: Send trigger to profiles repository
         run: |
           echo "🚀 开始触发 profiles 仓库部署..."
+          
+          # 关键：明确指定目标仓库的完整路径
+          REPO_OWNER="Flygeon"   # 例如：flygeon
+          REPO_NAME="Profile-page"                   # 你的 profiles 仓库名
+          
           curl -X POST \
             -H "Accept: application/vnd.github.v3+json" \
             -H "Authorization: token ${{ secrets.PROFILES_REPO_PAT }}" \
-            https://api.github.com/repos/Flygeon/profiles/dispatches \
+            "https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/dispatches" \
             -d '{"event_type":"astro-updated"}'
+          
           echo "✅ 触发信号已发送"
