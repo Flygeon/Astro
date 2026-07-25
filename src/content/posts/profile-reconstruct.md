@@ -1,5 +1,5 @@
 ---
-title: 对个人主页进行了重构并迁移了框架1
+title: 对个人主页进行了重构并迁移了框架
 published: 2026-07-25
 description: 将原来的Svelte的个人主页重构为Next.js，大幅重构了页面，整体屎山得到优化
 image: https://raw.flygeon.eu.org/Flygeon/Astro/refs/heads/main/image/profile1.webp
