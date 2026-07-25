@@ -5,6 +5,7 @@ User-agent: *
 Allow: /
 Disallow: /_astro/
 Disallow: /pagefind
+Disallow: /post.json
 
 Sitemap: ${new URL("sitemap-index.xml", import.meta.env.SITE).href}
 `.trim();
