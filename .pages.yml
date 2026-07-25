@@ -72,12 +72,12 @@ content:
       primary: title
       sort: published
       order: desc
-      fields: [create, title, published, draft, tags]   # 列表显示 id 方便查看
+      fields: [create, title, published, draft, tags]
 
     # ---------- 文件名模板：使用 id 字段的值 ----------
     filename:
       template: "{primary}.md"
-      field: title       # 从 frontmatter 的 create 字段取值，注意必须存在且非空
+      field: title
 
 # ========== Actions 配置 - 触发部署 ==========
 actions:
@@ -85,8 +85,10 @@ actions:
   - name: deploy-astro
     label: 部署 Astro 站点
     workflow: .github/workflows/deploy-astro.yml
+    ref: main
 
   # 触发 profiles 仓库的部署（通过桥梁工作流）
   - name: deploy-profiles
     label: 部署 Profiles 站点
     workflow: .github/workflows/trigger-profiles.yml
+    ref: main
