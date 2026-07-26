@@ -1,5 +1,6 @@
 ---
 import type { UserSubjectCollection } from "@/types/bangumi";
+import { Icon } from "astro-icon/components";
 import Card from "./Card.astro";
 import FilterControls from "./FilterControls.astro";
 import Pagination from "./Pagination.astro";
@@ -40,11 +41,57 @@ const filters = [
 ].filter((filter) => filter.value === "all" || filter.count > 0);
 
 const defaultFilter = "all";
+
+const scoredItems = items.filter((item) => item.subject.score > 0);
+const averageScore = scoredItems.length
+	? scoredItems.reduce((sum, item) => sum + item.subject.score, 0) /
+		scoredItems.length
+	: 0;
 ---
 
 <div class:list={["bangumi-section", { "hidden": !isActive }]} data-section={sectionId}>
   {items.length > 0 ? (
     <>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-5">
+        <button
+          type="button"
+          class="bangumi-source-card card-base flex items-center gap-3 min-h-20 px-4 py-3 text-left ring-2 ring-[var(--primary)] transition-all duration-200"
+          data-image-source="domestic"
+          aria-pressed="true"
+        >
+          <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[var(--primary)]/15 text-[var(--primary)]">
+            <Icon name="material-symbols:database-rounded" class="text-2xl" />
+          </span>
+          <span>
+            <span class="block text-xs text-gray-500 dark:text-gray-400">图源</span>
+            <span class="block font-bold text-gray-800 dark:text-gray-100">国内源</span>
+          </span>
+        </button>
+        <button
+          type="button"
+          class="bangumi-source-card card-base flex items-center gap-3 min-h-20 px-4 py-3 text-left ring-2 ring-transparent transition-all duration-200"
+          data-image-source="official"
+          aria-pressed="false"
+        >
+          <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-blue-500/15 text-blue-500">
+            <Icon name="material-symbols:public-rounded" class="text-2xl" />
+          </span>
+          <span>
+            <span class="block text-xs text-gray-500 dark:text-gray-400">图源</span>
+            <span class="block font-bold text-gray-800 dark:text-gray-100">官方源</span>
+          </span>
+        </button>
+        <div class="card-base flex items-center gap-3 min-h-20 px-4 py-3">
+          <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-yellow-500/15 text-yellow-500">
+            <Icon name="material-symbols:star-rounded" class="text-2xl" />
+          </span>
+          <span>
+            <span class="block text-xs text-gray-500 dark:text-gray-400">Bangumi 均分</span>
+            <span class="block text-xl font-bold text-gray-800 dark:text-gray-100" data-average-score>{averageScore.toFixed(1)}</span>
+          </span>
+        </div>
+      </div>
+
       <FilterControls
         filters={filters}
         activeFilter={defaultFilter}
@@ -58,6 +105,7 @@ const defaultFilter = "all";
             style={index >= itemsPerPage ? "display: none;" : undefined}
             data-item-section={sectionId}
             data-item-status={statusMap[item.type as keyof typeof statusMap] || "unknown"}
+            data-item-score={item.subject.score}
           >
             <Card item={item} />
           </div>
@@ -78,3 +126,54 @@ const defaultFilter = "all";
     </div>
   )}
 </div>
+
+<script is:inline define:vars={{ sectionId }}>
+  (function() {
+    const STORAGE_KEY = 'bangumi-image-source';
+    const section = document.querySelector(`[data-section="${sectionId}"]`);
+    if (!section || section.dataset.overviewInitialized === 'true') return;
+    section.dataset.overviewInitialized = 'true';
+
+    function setImageSource(source) {
+      const selectedSource = source === 'official' ? 'official' : 'domestic';
+      section.querySelectorAll('[data-image-source]').forEach(button => {
+        const active = button.dataset.imageSource === selectedSource;
+        button.classList.toggle('ring-[var(--primary)]', active);
+        button.classList.toggle('ring-transparent', !active);
+        button.setAttribute('aria-pressed', String(active));
+      });
+
+      section.querySelectorAll('.bangumi-lazy-img').forEach(image => {
+        const nextSrc = selectedSource === 'official' ? image.dataset.officialSrc : image.dataset.domesticSrc;
+        if (!nextSrc) return;
+        image.dataset.src = nextSrc;
+        if (image.getAttribute('src')) image.src = nextSrc;
+      });
+
+      localStorage.setItem(STORAGE_KEY, selectedSource);
+    }
+
+    function updateAverage(filter) {
+      const scores = Array.from(section.querySelectorAll('[data-item-score]'))
+        .filter(item => filter === 'all' || item.dataset.itemStatus === filter)
+        .map(item => Number(item.dataset.itemScore))
+        .filter(score => Number.isFinite(score) && score > 0);
+      const average = scores.length ? scores.reduce((sum, score) => sum + score, 0) / scores.length : 0;
+      const output = section.querySelector('[data-average-score]');
+      if (output) output.textContent = average.toFixed(1);
+    }
+
+    section.querySelectorAll('[data-image-source]').forEach(button => {
+      button.addEventListener('click', function() {
+        setImageSource(this.dataset.imageSource);
+      });
+    });
+
+    section.addEventListener('bangumiFilterChange', function(event) {
+      updateAverage(event.detail.filter);
+    });
+
+    setImageSource(localStorage.getItem(STORAGE_KEY) || 'domestic');
+    updateAverage('all');
+  })();
+</script>

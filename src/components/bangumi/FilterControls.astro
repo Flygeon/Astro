@@ -96,6 +96,13 @@ const { filters, activeFilter, sectionId } = Astro.props;
             });
             pagination.dispatchEvent(event);
           }
+
+          const section = document.querySelector(`[data-section="${currentSectionId}"]`);
+          if (section) {
+            section.dispatchEvent(new CustomEvent('bangumiFilterChange', {
+              detail: { filter: filter }
+            }));
+          }
         });
       });
     }

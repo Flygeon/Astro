@@ -56,21 +56,12 @@ async function fetchAllCollections(
 }
 
 let animeItems: UserSubjectCollection[] = [];
-let gameItems: UserSubjectCollection[] = [];
 
 try {
 	animeItems = await fetchAllCollections(2);
-	gameItems = await fetchAllCollections(4);
 } catch (error) {
 	console.error("Failed to fetch bangumi data, using empty fallback:", error);
 }
-
-const sections = [
-	{ id: "anime", label: "动画", items: animeItems },
-	{ id: "game", label: "游戏", items: gameItems },
-];
-
-let activeSection = sections[0].id;
 ---
 
 <MainGridLayout title={i18n(I18nKey.bangumi)} description={i18n(I18nKey.bangumi)}>
@@ -79,7 +70,7 @@ let activeSection = sections[0].id;
       <div class="mb-6">
         <h1 class="text-2xl font-bold mb-2 text-[var(--primary)]">我的Bangumi收藏</h1>
         <div class="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
-          <span>我的看番/游戏收藏</span>
+          <span>我的看番收藏</span>
           <span class="text-gray-300 dark:text-gray-600">|</span>
           <a
             href={`https://bgm.tv/user/${BANGUMI_USERNAME}`}
@@ -92,100 +83,7 @@ let activeSection = sections[0].id;
         </div>
       </div>
 
-      <div class="flex gap-2 mb-6 border-b border-gray-200 dark:border-gray-700">
-        {sections.map((section) => (
-          <button
-            class:list={[
-              "px-4 py-2 text-sm font-medium border-b-2 transition-colors duration-200",
-              {
-                "border-[var(--primary)] text-[var(--primary)]": section.id === activeSection,
-                "border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200": section.id !== activeSection,
-              }
-            ]}
-            data-tab={section.id}
-            type="button"
-          >
-            {section.label} ({section.items.length})
-          </button>
-        ))}
-      </div>
-
-      {sections.map((section) => (
-        <BangumiSection
-          sectionId={section.id}
-          items={section.items}
-          isActive={section.id === activeSection}
-        />
-      ))}
+      <BangumiSection sectionId="anime" items={animeItems} isActive={true} />
     </div>
   </div>
 </MainGridLayout>
-
-<script>
-  (function() {
-    const ITEMS_PER_PAGE = 9;
-
-    function getAllItems(sectionId) {
-      return Array.from(document.querySelectorAll(`[data-item-section="${sectionId}"]`));
-    }
-
-    function showFirstPage(sectionId) {
-      const allItems = getAllItems(sectionId);
-      const visibleItems = allItems.filter(item => !item.classList.contains('hidden'));
-
-      allItems.forEach(item => {
-        item.style.display = 'none';
-      });
-
-      visibleItems.slice(0, ITEMS_PER_PAGE).forEach(item => {
-        item.style.display = 'block';
-      });
-
-      return visibleItems.length;
-    }
-
-    function updatePagination(sectionId, visibleCount) {
-      const pagination = document.querySelector(`[data-pagination-section="${sectionId}"]`);
-      if (pagination) {
-        const event = new CustomEvent('updatePagination', {
-          detail: { visibleCount: visibleCount }
-        });
-        pagination.dispatchEvent(event);
-      }
-    }
-
-    function initTabs() {
-      const tabs = document.querySelectorAll('[data-tab]');
-      tabs.forEach(tab => {
-        tab.addEventListener('click', function() {
-          const targetId = this.dataset.tab;
-
-          tabs.forEach(t => {
-            t.classList.remove('border-[var(--primary)]', 'text-[var(--primary)]');
-            t.classList.add('border-transparent', 'text-gray-500');
-          });
-
-          this.classList.remove('border-transparent', 'text-gray-500');
-          this.classList.add('border-[var(--primary)]', 'text-[var(--primary)]');
-
-          document.querySelectorAll('[data-section]').forEach(section => {
-            if (section.dataset.section === targetId) {
-              section.classList.remove('hidden');
-            } else {
-              section.classList.add('hidden');
-            }
-          });
-
-          const visibleCount = showFirstPage(targetId);
-          updatePagination(targetId, visibleCount);
-        });
-      });
-    }
-
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', initTabs);
-    } else {
-      initTabs();
-    }
-  })();
-</script>
