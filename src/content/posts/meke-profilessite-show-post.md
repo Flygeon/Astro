@@ -1,5 +1,5 @@
 ---
-title: 邪道,让你的个人站点也能显示博客的文章1
+title: 邪道,让你的个人站点也能显示博客的文章
 published: 2026-07-26
 description: 本文主要讲述了神人站长为了给自己的个人页集成博客的功能，但又不想迁移原有的 Astro 博客，而发动鬼脑想出了邪道手法——让个人页显示博客文章的摘要
 image: https://raw.flygeon.eu.org/Flygeon/Astro/refs/heads/main/image/blogpost.webp
