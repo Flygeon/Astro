@@ -16,7 +16,7 @@ const navIcons: Record<string, string> = {
 	"/about/": "material-symbols:person-outline-rounded",
 	"/friends/": "material-symbols:groups-outline-rounded",
 	"/bangumi/": "material-symbols:movie-outline-rounded",
-	"https://github.com/Flygeon": "fa6-brands:github",
+	"https://www.travellings.cn/go.html": "material-symbols:train-outline-rounded",
 };
 
 let links: NavBarLink[] = navBarConfig.links.map(
@@ -43,7 +43,7 @@ let links: NavBarLink[] = navBarConfig.links.map(
 
         <div class="hidden md:flex justify-self-center gap-2" id="navbar-nav">
             {links.map((l) => {
-                return <a aria-label={l.name} href={l.external ? l.url : url(l.url)} target={l.external ? "_blank" : null}
+                return <a aria-label={l.name} href={l.external ? l.url : url(l.url)} target={l.external ? "_blank" : null} rel={l.external ? "noopener noreferrer" : null}
                           class="navbar-icon-button btn-plain scale-animation rounded-lg h-11 font-bold px-3 active:scale-95"
                 >
                     <div class="flex items-center">

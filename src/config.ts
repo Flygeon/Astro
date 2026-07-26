@@ -56,8 +56,8 @@ export const navBarConfig: NavBarConfig = {
 		LinkPreset.Friends,
 		LinkPreset.Bangumi,
 		{
-			name: "GitHub",
-			url: "https://github.com/Flygeon",
+			name: "开往",
+			url: "https://www.travellings.cn/go.html",
 			external: true,
 		},
 	],
