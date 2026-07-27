@@ -26,13 +26,9 @@ pinned: false
 
 然后就又是漫无止境的调试工作，找 bug 修 bug 出现新的 bug，做触屏优化，权限适配
 
-## 项目展示
-
-还没想好怎么写
-
 ## 发布
 
-[https://github.com/Flygeon/LumiLuna](https://github.com/Flygeon/LumiLuna)
+项目源码与发布信息：[Flygeon/LumiLuna](https://github.com/Flygeon/LumiLuna)
 
 给主播点点 Star 喵
 
