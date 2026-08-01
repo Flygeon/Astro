@@ -1,0 +1,62 @@
+---
+import MusicPlayer from "@components/music/MusicPlayer.svelte";
+import I18nKey from "@i18n/i18nKey";
+import { i18n } from "@i18n/translation";
+import MainGridLayout from "@layouts/MainGridLayout.astro";
+import type { Song } from "@/types/music";
+
+const PLAYLIST_API =
+	"https://meting.mikus.ink/api?server=netease&type=playlist&id=18117338659";
+
+// 构建期预取一次歌单作为首屏兜底数据，失败不影响构建，客户端会自行重新拉取
+let initialSongs: Song[] = [];
+try {
+	const res = await fetch(PLAYLIST_API, { signal: AbortSignal.timeout(15000) });
+	if (res.ok) {
+		const data = await res.json();
+		if (Array.isArray(data)) {
+			initialSongs = data.filter(
+				(item): item is Song =>
+					!!item && typeof item.title === "string" && typeof item.url === "string",
+			);
+		}
+	} else {
+		console.warn(`[music] playlist prefetch failed: HTTP ${res.status}`);
+	}
+} catch (error) {
+	console.warn("[music] playlist prefetch failed, fallback to client fetch:", error);
+}
+---
+
+<MainGridLayout title={i18n(I18nKey.music)} description="在线音乐播放器">
+	<MusicPlayer apiUrl={PLAYLIST_API} initialSongs={initialSongs} client:only="svelte" />
+
+	<div class="card-base px-9 py-6 mt-4">
+		<h2 class="text-lg font-bold text-[var(--primary)] mb-3">关于这个播放器</h2>
+		<div class="text-sm text-[var(--content-muted)] leading-relaxed space-y-2">
+			<p>
+				本页播放器基于开源项目
+				<a
+					href="https://github.com/Mengobs/MusicPlayer"
+					target="_blank"
+					rel="noopener noreferrer"
+					class="text-[var(--primary)] hover:underline">Mengobs/MusicPlayer</a
+				>
+				（作者 Meng Xinhong）改造而来，原项目以
+				<a
+					href="https://github.com/Mengobs/MusicPlayer/blob/main/LICENSE"
+					target="_blank"
+					rel="noopener noreferrer"
+					class="text-[var(--primary)] hover:underline">MIT License</a
+				> 授权开源，版权归原作者所有：Copyright (c) 2025 Meng Xinhong。
+			</p>
+			<p>
+				主要改动：由原生页面重写为 Svelte 组件并嵌入本站；移除本地选文件逻辑，改为通过 Meting API
+				拉取歌单并展示播放列表；歌词改为远程拉取解析并支持译文分行；新增切歌、播放模式、音量与系统媒体控制。原项目的封面取色、四象限旋转模糊背景与阶梯式歌词滚动动画予以保留。
+			</p>
+			<p>
+				音频与歌词数据来自第三方 Meting API（网易云音乐源），仅供个人在线试听，音乐版权归各自权利人所有；部分曲目可能因版权限制无法播放。
+			</p>
+		</div>
+	</div>
+</MainGridLayout>

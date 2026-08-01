@@ -59,6 +59,7 @@ export enum LinkPreset {
 	About = 2,
 	Friends = 3,
 	Bangumi = 4,
+	Music = 5,
 }
 
 export type NavBarLink = {

@@ -37,6 +37,7 @@ export const th: Translation = {
 	[Key.license]: "สัญญาอนุญาต",
 	[Key.friends]: "เพื่อน",
 	[Key.bangumi]: "Bangumi",
+	[Key.music]: "เพลง",
 	[Key.aigcLabel]: "รูปแบบการสร้าง",
 	[Key.aigcAssisted]: "เขียนร่วมกับ AI",
 	[Key.aigcAi]: "สร้างโดย AI",

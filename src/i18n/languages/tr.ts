@@ -37,6 +37,7 @@ export const tr: Translation = {
 	[Key.license]: "Lisans",
 	[Key.friends]: "Arkadaşlar",
 	[Key.bangumi]: "Bangumi",
+	[Key.music]: "Müzik",
 	[Key.aigcLabel]: "İçerik oluşturma",
 	[Key.aigcAssisted]: "AI destekli",
 	[Key.aigcAi]: "AI tarafından oluşturuldu",

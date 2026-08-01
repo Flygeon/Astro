@@ -37,6 +37,7 @@ export const zh_CN: Translation = {
 	[Key.license]: "许可协议",
 	[Key.friends]: "友链",
 	[Key.bangumi]: "Bangumi",
+	[Key.music]: "音乐",
 	[Key.aigcLabel]: "内容创作方式",
 	[Key.aigcAssisted]: "AI 辅助创作",
 	[Key.aigcAi]: "完全由 AI 创作",

@@ -55,6 +55,7 @@ export const navBarConfig: NavBarConfig = {
 		LinkPreset.About,
 		LinkPreset.Friends,
 		LinkPreset.Bangumi,
+		LinkPreset.Music,
 		{
 			name: "开往",
 			url: "https://www.travellings.cn/go.html",
