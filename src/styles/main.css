@@ -199,6 +199,36 @@
     html[data-post-list-layout="list"] #post-list > .card-base .post-cover {
         display: none;
     }
+    /* 悬停：左侧主题色竖条滑入 + 轻微底色，让均质的条目产生节奏感 */
+    html[data-post-list-layout="list"] #post-list > .card-base::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0.5rem;
+        bottom: 0.5rem;
+        width: 3px;
+        border-radius: 0 3px 3px 0;
+        background: var(--primary);
+        transform: scaleY(0);
+        transform-origin: center;
+        opacity: 0;
+        transition:
+            transform 0.32s cubic-bezier(0.22, 1, 0.36, 1),
+            opacity 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+        pointer-events: none;
+    }
+    html[data-post-list-layout="list"] #post-list > .card-base:hover::before {
+        transform: scaleY(1);
+        opacity: 1;
+    }
+    html[data-post-list-layout="list"] #post-list > .card-base:hover {
+        background-color: color-mix(in srgb, var(--primary) 6%, transparent);
+    }
+    @media (prefers-reduced-motion: reduce) {
+        html[data-post-list-layout="list"] #post-list > .card-base::before {
+            transition: none;
+        }
+    }
     html[data-post-list-layout="list"] #post-list > .post-list-divider {
         display: block;
     }

@@ -6,12 +6,10 @@ import Icon from "@iconify/svelte";
 import {
 	applyThemeToDocument,
 	getBackgroundHidden,
-	getBannerHidden,
 	getDefaultHue,
 	getHue,
 	getStoredTheme,
 	setBackgroundHidden,
-	setBannerHidden,
 	setHue,
 	setTheme,
 } from "@utils/setting-utils";
@@ -24,7 +22,6 @@ const modes: LIGHT_DARK_MODE[] = [LIGHT_MODE, DARK_MODE, AUTO_MODE];
 let mode: LIGHT_DARK_MODE = $state(AUTO_MODE);
 let layout = $state<"single" | "double">("single");
 let listLayout = $state<"card" | "list">("list");
-let bannerHidden = $state(false);
 let backgroundHidden = $state(false);
 let open = $state(false);
 
@@ -36,7 +33,6 @@ onMount(() => {
 	listLayout =
 		localStorage.getItem("post-list-layout") === "card" ? "card" : "list";
 	document.documentElement.dataset.postListLayout = listLayout;
-	bannerHidden = getBannerHidden();
 	backgroundHidden = getBackgroundHidden();
 	const preference = window.matchMedia("(prefers-color-scheme: dark)");
 	const updateTheme = () => applyThemeToDocument(mode);
@@ -51,11 +47,6 @@ function resetHue() {
 function switchMode(nextMode: LIGHT_DARK_MODE) {
 	mode = nextMode;
 	setTheme(nextMode);
-}
-
-function toggleBannerHidden() {
-	bannerHidden = !bannerHidden;
-	setBannerHidden(bannerHidden);
 }
 
 function switchLayout() {
@@ -145,13 +136,6 @@ $effect(() => {
                     列表式布局（实验性）
                 </span>
                 <span class="text-sm text-black/50 dark:text-white/50">{listLayout === "list" ? "开" : "关"}</span>
-            </button>
-            <button class="flex items-center justify-between w-full btn-plain scale-animation rounded-lg h-11 px-3" onclick={toggleBannerHidden}>
-                <span class="flex items-center gap-3">
-                    <Icon icon={bannerHidden ? "material-symbols:image-outline" : "material-symbols:hide-image-outline"} class="text-xl"></Icon>
-                    {bannerHidden ? "显示头图" : "隐藏头图"}
-                </span>
-                <Icon icon="material-symbols:chevron-right-rounded" class="text-lg"></Icon>
             </button>
             <button class="flex items-center justify-between w-full btn-plain scale-animation rounded-lg h-11 px-3" onclick={toggleBackgroundHidden}>
                 <span class="flex items-center gap-3">

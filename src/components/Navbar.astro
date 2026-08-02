@@ -89,8 +89,11 @@ let links: NavBarLink[] = navBarConfig.links.map(
 
 <style>
     #navbar-inner {
-        transition: width 0.05s linear, max-width 0.05s linear, box-shadow 0.2s ease, border 0.2s ease;
+        /* 宽度不走 CSS transition：它由 rAF 阻尼循环逐帧写入，
+           再叠一层 50ms 补间会让两套动画互相追赶，表现为卡顿 */
+        transition: box-shadow 0.2s ease, border 0.2s ease;
         border: 1px solid color-mix(in srgb, var(--card-bg) 60%, var(--primary) 15%);
+        will-change: width;
     }
     
     #navbar-title {
@@ -179,46 +182,93 @@ function loadButtonScript() {
     }
 }
 
+// swup 软导航会重复调用 init，若不解绑旧监听器会逐页累积，滚动时多套 rAF 循环互相争抢
+let detachNavbarScroll = null;
+
 function initNavbarScroll() {
+    if (detachNavbarScroll) {
+        detachNavbarScroll();
+        detachNavbarScroll = null;
+    }
+
     const navbar = document.getElementById("navbar");
     const navbarInner = document.getElementById("navbar-inner");
     if (!navbar || !navbarInner) return;
 
-    let ticking = false;
-    const maxScroll = 400; 
+    const maxScroll = 400;
+    const startWidth = 1200;
+    const endWidth = 420;
+    // 阻尼系数：每帧向目标推进的比例，越小越顺滑但跟手感越弱
+    const EASE = 0.12;
+    // 与目标差值小于此阈值即吸附并停止循环，避免无限逼近空转
+    const EPSILON = 0.5;
 
-    function updateNavbar() {
-        const scrollY = window.scrollY;
-        const progress = Math.min(Math.max(scrollY / maxScroll, 0), 1);
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
-        const startWidth = 1200; 
-        const endWidth = 420;   
+    let targetProgress = 0;
+    let currentProgress = 0;
+    let rafId = 0;
+    let collapsed = null;
+
+    function readTarget() {
+        targetProgress = Math.min(Math.max(window.scrollY / maxScroll, 0), 1);
+    }
+
+    function paint(progress) {
         const currentWidth = startWidth - (startWidth - endWidth) * progress;
-
         navbarInner.style.maxWidth = `${currentWidth}px`;
         navbarInner.style.width = `${currentWidth}px`;
 
-        const shadowOpacity = 0.05 + progress * 0.15; 
-        const dynamicShadow = `0 10px 25px -5px rgba(0, 0, 0, ${shadowOpacity}), 0 8px 10px -6px rgba(0, 0, 0, ${shadowOpacity})`;
-        navbarInner.style.setProperty('--navbar-shadow', dynamicShadow);
+        const shadowOpacity = 0.05 + progress * 0.15;
+        navbarInner.style.setProperty(
+            '--navbar-shadow',
+            `0 10px 25px -5px rgba(0, 0, 0, ${shadowOpacity}), 0 8px 10px -6px rgba(0, 0, 0, ${shadowOpacity})`
+        );
 
-        if (progress > 0.7) {
-            navbar.classList.add("navbar-collapsed");
-        } else {
-            navbar.classList.remove("navbar-collapsed");
+        // 折叠状态加 5% 迟滞，防止在阈值附近抖动时反复增删 class 引发重排
+        const nextCollapsed = collapsed
+            ? progress > 0.65
+            : progress > 0.7;
+        if (nextCollapsed !== collapsed) {
+            collapsed = nextCollapsed;
+            navbar.classList.toggle("navbar-collapsed", nextCollapsed);
         }
-
-        ticking = false;
     }
 
-    window.addEventListener("scroll", function () {
-        if (!ticking) {
-            window.requestAnimationFrame(updateNavbar);
-            ticking = true;
+    function tick() {
+        const delta = targetProgress - currentProgress;
+        if (Math.abs(delta) < EPSILON / maxScroll) {
+            currentProgress = targetProgress;
+            paint(currentProgress);
+            rafId = 0;
+            return;
         }
-    }, { passive: true });
+        currentProgress += delta * EASE;
+        paint(currentProgress);
+        rafId = requestAnimationFrame(tick);
+    }
 
-    updateNavbar();
+    function onScroll() {
+        readTarget();
+        if (reduceMotion.matches) {
+            currentProgress = targetProgress;
+            paint(currentProgress);
+            return;
+        }
+        if (!rafId) rafId = requestAnimationFrame(tick);
+    }
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+
+    detachNavbarScroll = () => {
+        window.removeEventListener("scroll", onScroll);
+        if (rafId) cancelAnimationFrame(rafId);
+        rafId = 0;
+    };
+
+    readTarget();
+    currentProgress = targetProgress;
+    paint(currentProgress);
 }
 
 loadButtonScript();
