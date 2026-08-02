@@ -4,6 +4,7 @@ import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 
 import ConfigCarrier from "@components/ConfigCarrier.astro";
+import pageBackground from "../assets/images/background.webp";
 import defaultSocialImage from "../assets/images/banner.webp";
 import { profileConfig, siteConfig } from "@/config";
 import {
@@ -168,11 +169,15 @@ const socialImage =
 			document.documentElement.style.setProperty('--hue', hue);
 
 			document.documentElement.dataset.postLayout = localStorage.getItem('post-layout') === 'double' ? 'double' : 'single';
-			document.documentElement.dataset.postListLayout = localStorage.getItem('post-list-layout') === 'list' ? 'list' : 'card';
+			document.documentElement.dataset.postListLayout = localStorage.getItem('post-list-layout') === 'card' ? 'card' : 'list';
 
 			// Load the banner visibility preference from local storage
 			if (localStorage.getItem('banner-hidden') === 'true') {
 				document.documentElement.classList.add('banner-hidden');
+			}
+
+			if (localStorage.getItem('background-hidden') === 'true') {
+				document.documentElement.classList.add('background-hidden');
 			}
 
 			// calculate the --banner-height-extend, which needs to be a multiple of 4 to avoid blurry text
@@ -214,7 +219,34 @@ const socialImage =
 	bannerOffset,
 	'banner-height-home': `${BANNER_HEIGHT_HOME}vh`,
 	'banner-height': `${BANNER_HEIGHT}vh`,
+	'page-background': `url("${pageBackground.src}")`,
 }}>
+/* 全站背景图：固定在视口，位于 --page-bg 之上、页面内容之下 */
+body::before {
+	content: "";
+	position: fixed;
+	inset: 0;
+	z-index: -1;
+	pointer-events: none;
+	background-image: var(--page-background);
+	background-size: cover;
+	background-position: center;
+	background-repeat: no-repeat;
+	background-attachment: fixed;
+	opacity: 0.5;
+	transition: opacity 0.3s;
+}
+html.dark body::before {
+	opacity: 0.28;
+}
+html.background-hidden body::before {
+	display: none;
+}
+/* 头图底部渐隐，让 banner 溶入背景图，消除硬边界的割裂感 */
+#banner-wrapper {
+	-webkit-mask-image: linear-gradient(to bottom, black 0%, black 62%, rgba(0,0,0,0.55) 84%, transparent 100%);
+	mask-image: linear-gradient(to bottom, black 0%, black 62%, rgba(0,0,0,0.55) 84%, transparent 100%);
+}
 @tailwind components;
 @layer components {
 	.enable-banner.is-home #banner-wrapper {

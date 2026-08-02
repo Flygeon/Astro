@@ -5,10 +5,12 @@ import { i18n } from "@i18n/translation";
 import Icon from "@iconify/svelte";
 import {
 	applyThemeToDocument,
+	getBackgroundHidden,
 	getBannerHidden,
 	getDefaultHue,
 	getHue,
 	getStoredTheme,
+	setBackgroundHidden,
 	setBannerHidden,
 	setHue,
 	setTheme,
@@ -21,8 +23,9 @@ const defaultHue = getDefaultHue();
 const modes: LIGHT_DARK_MODE[] = [LIGHT_MODE, DARK_MODE, AUTO_MODE];
 let mode: LIGHT_DARK_MODE = $state(AUTO_MODE);
 let layout = $state<"single" | "double">("single");
-let listLayout = $state<"card" | "list">("card");
+let listLayout = $state<"card" | "list">("list");
 let bannerHidden = $state(false);
+let backgroundHidden = $state(false);
 let open = $state(false);
 
 onMount(() => {
@@ -31,9 +34,10 @@ onMount(() => {
 		localStorage.getItem("post-layout") === "double" ? "double" : "single";
 	document.documentElement.dataset.postLayout = layout;
 	listLayout =
-		localStorage.getItem("post-list-layout") === "list" ? "list" : "card";
+		localStorage.getItem("post-list-layout") === "card" ? "card" : "list";
 	document.documentElement.dataset.postListLayout = listLayout;
 	bannerHidden = getBannerHidden();
+	backgroundHidden = getBackgroundHidden();
 	const preference = window.matchMedia("(prefers-color-scheme: dark)");
 	const updateTheme = () => applyThemeToDocument(mode);
 	preference.addEventListener("change", updateTheme);
@@ -67,6 +71,11 @@ function switchLayout() {
 			320,
 		);
 	});
+}
+
+function toggleBackgroundHidden() {
+	backgroundHidden = !backgroundHidden;
+	setBackgroundHidden(backgroundHidden);
 }
 
 function switchListLayout() {
@@ -141,6 +150,13 @@ $effect(() => {
                 <span class="flex items-center gap-3">
                     <Icon icon={bannerHidden ? "material-symbols:image-outline" : "material-symbols:hide-image-outline"} class="text-xl"></Icon>
                     {bannerHidden ? "显示头图" : "隐藏头图"}
+                </span>
+                <Icon icon="material-symbols:chevron-right-rounded" class="text-lg"></Icon>
+            </button>
+            <button class="flex items-center justify-between w-full btn-plain scale-animation rounded-lg h-11 px-3" onclick={toggleBackgroundHidden}>
+                <span class="flex items-center gap-3">
+                    <Icon icon={backgroundHidden ? "material-symbols:wallpaper" : "material-symbols:wallpaper-slideshow-outline-rounded"} class="text-xl"></Icon>
+                    {backgroundHidden ? "显示背景图" : "隐藏背景图"}
                 </span>
                 <Icon icon="material-symbols:chevron-right-rounded" class="text-lg"></Icon>
             </button>

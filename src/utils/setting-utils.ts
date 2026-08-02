@@ -68,3 +68,12 @@ export function setBannerHidden(hidden: boolean): void {
 	localStorage.setItem("banner-hidden", String(hidden));
 	document.documentElement.classList.toggle("banner-hidden", hidden);
 }
+
+export function getBackgroundHidden(): boolean {
+	return localStorage.getItem("background-hidden") === "true";
+}
+
+export function setBackgroundHidden(hidden: boolean): void {
+	localStorage.setItem("background-hidden", String(hidden));
+	document.documentElement.classList.toggle("background-hidden", hidden);
+}
