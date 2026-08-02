@@ -136,6 +136,28 @@ const mainPanelTop = siteConfig.banner.enable
 
 
 <style is:global>
+    /* banner 不再渲染自己的图，改为透出全站固定背景图，
+       使 banner 区与下方页面背景是同一张连续的图，没有接缝 */
+    #banner {
+        display: none !important;
+    }
+    #banner-wrapper {
+        background: transparent;
+    }
+    /* 标语区加一层自上而下的暗色柔光，保证白字在浅色背景上的可读性 */
+    #banner-text-overlay::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        pointer-events: none;
+        background: radial-gradient(
+            ellipse at center,
+            rgba(0, 0, 0, 0.38) 0%,
+            rgba(0, 0, 0, 0.22) 45%,
+            transparent 75%
+        );
+    }
     #banner-text-overlay {
         opacity: 0;
         transform: translateY(20px);
