@@ -157,8 +157,31 @@ wrangler d1 execute yuucomments-db --file=./migrate-old-comments.sql --remote --
 2. 填写昵称 + 内容，完成 Turnstile 验证，提交后应立即可见。
 3. 用 Swup 软导航在文章间跳转，评论能正常重新加载（不刷新整页）。
 4. 旧评论出现在对应文章下。
-5. 后台（受 `ADMIN_TOKEN` 保护）：`https://comments.flygeon.top/admin`，
-   按你要求**不对外公开**，仅在本地/可信网络使用。
+5. 管理后台（受 `ADMIN_TOKEN` 保护）
+
+   **注意：后台页面不是由 Worker 托管的**，Worker 只提供 `/api/*` 接口。
+   `comments.flygeon.top/admin` 打不开是正常的。admin 是 `pnpm build` 生成的
+   独立静态站点（`dist/admin/`，构建时把 API 地址写进 `index.html` 的 `data-api-base`）。
+
+   **当前方案：挂在博客域名下，任何地方都能直接打开**（按你后续要求改为公开）。
+   已把 `dist/admin/` 复制到 `C:\blog\blog\public\admin\`，重新部署博客后即可访问：
+
+   ```
+   https://flygeon.top/admin/
+   ```
+
+   首次打开会要求输入 **Admin Token**（即你 `wrangler secret put ADMIN_TOKEN` 设的值），
+   输入后存进浏览器 localStorage，之后直接管理评论（删除 / 审核 / 封禁 / 查看举报）。
+   Worker 的 CORS 已放行 `https://flygeon.top`、`https://www.flygeon.top`，无需改。
+
+   > 页面本身公网可见，但**所有写操作都要 ADMIN_TOKEN**，没有 token 什么都做不了。
+   > `data-api-base` 已固定为 `https://comments.flygeon.top`（若以后在 YuuComments 仓库
+   > 重新 `pnpm build`，务必先设 `$env:PUBLIC_COMMENTS_API_BASE_URL="https://comments.flygeon.top"`，
+   > 否则会回到占位符地址；改完再重新复制 `dist/admin/` 到 `public/admin/` 并部署博客）。
+
+   备选（仅本机）：`cd C:\blog\YuuComments\dist\admin && python -m http.server 8787` →
+   `http://localhost:8787/`（端口 8787 在 CORS 白名单）。
+   忘了 ADMIN_TOKEN：用 `wrangler secret put ADMIN_TOKEN --config worker/wrangler.toml` 重设。
 
 ---
 
