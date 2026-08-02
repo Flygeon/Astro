@@ -21,6 +21,7 @@ const defaultHue = getDefaultHue();
 const modes: LIGHT_DARK_MODE[] = [LIGHT_MODE, DARK_MODE, AUTO_MODE];
 let mode: LIGHT_DARK_MODE = $state(AUTO_MODE);
 let layout = $state<"single" | "double">("single");
+let listLayout = $state<"card" | "list">("card");
 let bannerHidden = $state(false);
 let open = $state(false);
 
@@ -29,6 +30,9 @@ onMount(() => {
 	layout =
 		localStorage.getItem("post-layout") === "double" ? "double" : "single";
 	document.documentElement.dataset.postLayout = layout;
+	listLayout =
+		localStorage.getItem("post-list-layout") === "list" ? "list" : "card";
+	document.documentElement.dataset.postListLayout = listLayout;
 	bannerHidden = getBannerHidden();
 	const preference = window.matchMedia("(prefers-color-scheme: dark)");
 	const updateTheme = () => applyThemeToDocument(mode);
@@ -58,6 +62,21 @@ function switchLayout() {
 		layout = nextLayout;
 		document.documentElement.dataset.postLayout = nextLayout;
 		localStorage.setItem("post-layout", nextLayout);
+		window.setTimeout(
+			() => postList?.classList.remove("layout-switching"),
+			320,
+		);
+	});
+}
+
+function switchListLayout() {
+	const next = listLayout === "list" ? "card" : "list";
+	const postList = document.getElementById("post-list");
+	postList?.classList.add("layout-switching");
+	requestAnimationFrame(() => {
+		listLayout = next;
+		document.documentElement.dataset.postListLayout = next;
+		localStorage.setItem("post-list-layout", next);
 		window.setTimeout(
 			() => postList?.classList.remove("layout-switching"),
 			320,
@@ -110,6 +129,13 @@ $effect(() => {
                     {layout === "double" ? "切换为单栏" : "切换为双栏"}
                 </span>
                 <Icon icon="material-symbols:chevron-right-rounded" class="text-lg"></Icon>
+            </button>
+            <button class="flex items-center justify-between w-full btn-plain scale-animation rounded-lg h-11 px-3" onclick={switchListLayout}>
+                <span class="flex items-center gap-3">
+                    <Icon icon={listLayout === "list" ? "material-symbols:view-agenda-outline-rounded" : "material-symbols:format-list-bulleted-rounded"} class="text-xl"></Icon>
+                    列表式布局（实验性）
+                </span>
+                <span class="text-sm text-black/50 dark:text-white/50">{listLayout === "list" ? "开" : "关"}</span>
             </button>
             <button class="flex items-center justify-between w-full btn-plain scale-animation rounded-lg h-11 px-3" onclick={toggleBannerHidden}>
                 <span class="flex items-center gap-3">

@@ -129,7 +129,7 @@ const postPath = url.replace(/\/$/, "");
             </Icon>
     </a>
 </div>
-<div class="transition border-t-[1px] border-dashed mx-6 border-black/10 dark:border-white/[0.15] last:border-t-0 md:hidden"></div>
+<div class="post-list-divider transition border-t-[1px] border-dashed mx-6 border-black/10 dark:border-white/[0.15] last:border-t-0 md:hidden"></div>
 
 <style define:vars={{coverWidth}}>
     .post-enter {
@@ -141,7 +141,8 @@ const postPath = url.replace(/\/$/, "");
             display: flex;
         }
 
-        :global(html[data-post-layout="double"]) .post-enter {
+        :global(html[data-post-layout="double"]) .post-enter,
+        :global(html[data-post-list-layout="list"]) .post-enter {
             display: flex;
         }
     }

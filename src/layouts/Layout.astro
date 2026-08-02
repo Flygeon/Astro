@@ -21,6 +21,22 @@ import type { Favicon } from "../types/config";
 import { pathsEqual, url } from "../utils/url-utils";
 import "katex/dist/katex.css";
 
+// YuuComments 前端配置（公开变量，构建时注入客户端 JS）
+const commentsApiBase = import.meta.env.PUBLIC_COMMENTS_API_BASE_URL ?? "";
+const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "";
+const yuuCommentsConfigJson = JSON.stringify({
+  apiBase: commentsApiBase,
+  turnstileSiteKey: turnstileSiteKey,
+  commentRenderAssetBase: "",
+  commentRenderAssets: {
+    marked: "/comments/vendor/marked.min.js",
+    dompurify: "/comments/vendor/purify.min.js",
+    katexCss: "/comments/vendor/katex-noop.css",
+    katex: "/comments/vendor/katex.min.js",
+    katexAutoRender: "/comments/vendor/auto-render.min.js",
+  },
+});
+
 interface Props {
 	title?: string;
 	banner?: string;
@@ -152,6 +168,7 @@ const socialImage =
 			document.documentElement.style.setProperty('--hue', hue);
 
 			document.documentElement.dataset.postLayout = localStorage.getItem('post-layout') === 'double' ? 'double' : 'single';
+			document.documentElement.dataset.postListLayout = localStorage.getItem('post-list-layout') === 'list' ? 'list' : 'card';
 
 			// Load the banner visibility preference from local storage
 			if (localStorage.getItem('banner-hidden') === 'true') {
@@ -169,6 +186,9 @@ const socialImage =
 		}}></style>  <!-- defines global css variables. This will be applied to <html> <body> and some other elements idk why -->
 
 
+		<!-- YuuComments 评论样式（自托管，无外部 CDN 依赖） -->
+		<link rel="stylesheet" href="/comments/comments.css" />
+
 		<slot name="head"></slot>
 
 		<script defer src="https://umami.flygeon.eu.org/script.js" data-website-id="34fe5a2e-c0bf-4b41-8a43-a9393f470d80"data-swup-ignore-script></script>
@@ -180,6 +200,10 @@ const socialImage =
 	>
 		<ConfigCarrier></ConfigCarrier>
 		<slot />
+
+		<!-- YuuComments：全局配置 + 一次性加载（SPA 软导航通过 window.swup page:view 重挂载） -->
+		<Fragment set:html={`<script>window.YuuCommentsConfig=Object.assign(window.YuuCommentsConfig||{},${yuuCommentsConfigJson});<\/script>`} />
+		<script is:inline src="/comments/comments.js"></script>
 
 		<!-- increase the page height during page transition to prevent the scrolling animation from jumping -->
 		<div id="page-height-extend" class="hidden h-[300vh]"></div>

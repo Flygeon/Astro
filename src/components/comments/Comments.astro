@@ -1,0 +1,37 @@
+---
+// Comments.astro — Fuwari 博客接入 YuuComments（自托管，Cloudflare Workers + D1）
+//
+// 本组件只负责渲染挂载点 #yuucomments。全局配置（window.YuuCommentsConfig）与
+// 脚本加载（/comments/comments.js）统一在 src/layouts/Layout.astro 中完成，
+// 这样无论用户通过整页加载还是 Swup 软导航进入文章页，评论都能正确挂载。
+//
+// 主题适配：把 YuuComments 的 6 个 CSS 变量映射到 Fuwari 主题变量，
+// 从而自动跟随站点的浅色 / 深色模式。
+---
+
+<div id="yuucomments"></div>
+
+<style is:global>
+  /* 主题适配：!important 保证覆盖 comments.css 内置的浅/深色默认值。
+     这些 Fuwari 变量本身已按 .dark 自动切换，因此评论区会跟随站点主题。 */
+  .yc-root,
+  .yc-root[data-theme="dark"] {
+    --yc-border: var(--line-divider) !important;
+    --yc-text: var(--content-text) !important;
+    --yc-muted: var(--content-muted) !important;
+    --yc-surface: var(--card-bg) !important;
+    --yc-soft: var(--btn-regular-bg) !important;
+    --yc-accent: var(--primary) !important;
+  }
+
+  /* 与 Fuwari 卡片保持一致的上下间距 */
+  #yuucomments {
+    margin-top: 1.5rem;
+  }
+
+  /* 深色模式下提交按钮文字保持可读 */
+  .yc-root[data-theme="dark"] .yc-form button[type="submit"],
+  .yc-root[data-theme="dark"] .yc-report-actions button[type="submit"] {
+    color: #fff;
+  }
+</style>

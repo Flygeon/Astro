@@ -168,6 +168,33 @@
             transition: none;
         }
     }
+    /* 列表式布局（实验性）：所有文章置于一张大底卡上，虚线分隔 */
+    html[data-post-list-layout="list"] #post-list {
+        column-count: 1 !important;
+        display: flex !important;
+        flex-direction: column;
+        gap: 0 !important;
+        background: var(--card-bg) !important;
+        border-radius: var(--radius-large);
+        overflow: hidden;
+        padding: 0.25rem 0 !important;
+    }
+    html[data-post-list-layout="list"] #post-list > .card-base {
+        background: transparent;
+        border-radius: 0;
+        margin-bottom: 0;
+    }
+    html[data-post-list-layout="list"] #post-list > .card-base .post-cover {
+        display: none;
+    }
+    html[data-post-list-layout="list"] #post-list > .post-list-divider {
+        display: block;
+    }
+    @media (min-width: 768px) {
+        html[data-post-list-layout="list"] #post-list > .card-base .post-content {
+            width: calc(100% - 52px - 12px) !important;
+        }
+    }
     .heatmap-panel[data-range="month"] .heatmap-grid {
         min-width: calc(var(--heatmap-weeks) * 1.2rem);
         gap: 0.25rem;
