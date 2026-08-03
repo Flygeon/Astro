@@ -222,14 +222,11 @@ const socialImage =
 	'page-background': `url("${pageBackground.src}")`,
 }}>
 /* 全站背景图：固定在视口，位于 --page-bg 之上、页面内容之下。
-   上下各留 12% 余量，供滚动视差位移时不露边。 */
+   完全静止，不随滚动位移。 */
 body::before {
 	content: "";
 	position: fixed;
-	left: 0;
-	right: 0;
-	top: -12%;
-	bottom: -12%;
+	inset: 0;
 	z-index: -1;
 	pointer-events: none;
 	background-image: var(--page-background);
@@ -237,30 +234,13 @@ body::before {
 	background-position: center;
 	background-repeat: no-repeat;
 	opacity: 0.5;
-	/* --bg-parallax 由滚动脚本写入；--bg-zoom 用于载入时的缩放收敛 */
-	transform: translate3d(0, var(--bg-parallax, 0px), 0) scale(var(--bg-zoom, 1));
-	transition: opacity 0.3s, transform 1.4s cubic-bezier(0.22, 1, 0.36, 1);
-	will-change: transform;
-}
-/* 收敛动画结束后撤掉 transform 过渡，否则滚动视差会被拖慢成拖影 */
-html.bg-settled body::before {
 	transition: opacity 0.3s;
-}
-/* 载入瞬间略微放大，随后收敛到 1，制造纵深呼吸感 */
-html:not(.bg-settled) body::before {
-	--bg-zoom: 1.06;
 }
 html.dark body::before {
 	opacity: 0.28;
 }
 html.background-hidden body::before {
 	display: none;
-}
-@media (prefers-reduced-motion: reduce) {
-	body::before {
-		transition: opacity 0.3s;
-		transform: none;
-	}
 }
 @tailwind components;
 @layer components {
@@ -594,33 +574,6 @@ function scrollFunction() {
 	if (!bannerEnabled) return
 }
 window.onscroll = scrollFunction
-
-// 背景图滚动视差：以 0.3 倍速反向位移，制造纵深。rAF 节流，尊重 reduced-motion。
-const bgReduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)')
-let bgParallaxTicking = false
-
-function updateBackgroundParallax() {
-	bgParallaxTicking = false
-	if (bgReduceMotion.matches) return
-	const scrolled = window.scrollY || document.documentElement.scrollTop || 0
-	// 限幅，避免长页面滚到底时背景被推出留白区
-	const offset = Math.min(scrolled * 0.3, window.innerHeight * 0.12)
-	document.documentElement.style.setProperty('--bg-parallax', `${-offset}px`)
-}
-
-function requestBackgroundParallax() {
-	if (bgParallaxTicking) return
-	bgParallaxTicking = true
-	requestAnimationFrame(updateBackgroundParallax)
-}
-
-window.addEventListener('scroll', requestBackgroundParallax, { passive: true })
-requestBackgroundParallax()
-
-// 触发载入时的缩放收敛（下一帧加 class，确保初始 1.06 已被渲染）
-requestAnimationFrame(() => {
-	requestAnimationFrame(() => document.documentElement.classList.add('bg-settled'))
-})
 
 window.onresize = () => {
 	// calculate the --banner-height-extend, which needs to be a multiple of 4 to avoid blurry text
