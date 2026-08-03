@@ -586,6 +586,46 @@
     }
   }
 
+  function colorFromString(str) {
+    let h = 0;
+    for (let i = 0; i < str.length; i++) {
+      h = (h * 31 + str.charCodeAt(i)) % 360;
+    }
+    return `hsl(${h}, 55%, 55%)`;
+  }
+
+  function createLetterAvatar(comment) {
+    const div = document.createElement("div");
+    div.className = "yc-avatar yc-avatar-letter";
+    const name = comment.nickname || "?";
+    div.textContent = Array.from(name)[0].toUpperCase();
+    div.style.background = colorFromString(name);
+    div.setAttribute("aria-hidden", "true");
+    return div;
+  }
+
+  function createAvatar(root, comment) {
+    // 优先 SHA256（emailHash），回退 MD5（emailMd5）；都没有则用字母占位
+    const hash = comment.emailHash || comment.emailMd5;
+    if (!hash) {
+      return createLetterAvatar(comment);
+    }
+    const img = document.createElement("img");
+    img.className = "yc-avatar";
+    // WeAvatar：HASH 为邮箱的 SHA256 或 MD5；无头像时自动回退 Gravatar/QQ/默认
+    img.src = `https://weavatar.com/avatar/${hash}?s=96`;
+    img.alt = comment.nickname || "";
+    img.width = 44;
+    img.height = 44;
+    img.loading = "lazy";
+    img.referrerPolicy = "no-referrer";
+    img.addEventListener("error", () => {
+      const letter = createLetterAvatar(comment);
+      if (letter) img.replaceWith(letter);
+    });
+    return img;
+  }
+
   function createCommentArticle(root, comment, commentsById) {
     const article = document.createElement("article");
     article.className = "yc-comment";
@@ -639,7 +679,17 @@
 
     const replies = document.createElement("div");
     replies.className = "yc-replies";
-    article.append(meta, content, actions, reportContainer, replies);
+
+    const body = document.createElement("div");
+    body.className = "yc-comment-body";
+    body.append(meta, content, actions, reportContainer, replies);
+
+    const avatar = createAvatar(root, comment);
+    if (avatar) {
+      article.append(avatar, body);
+    } else {
+      article.append(body);
+    }
     return article;
   }
 

@@ -35,4 +35,43 @@
   .yc-root[data-theme="dark"] .yc-report-actions button[type="submit"] {
     color: #fff;
   }
+
+  /* 评论头像：weavatar 图片 + 无邮箱时的字母占位。
+     .yc-comment 由纵向 grid 改为「头像 + 内容列」的 flex 布局，
+     内容列 (.yc-comment-body) 包裹 meta/content/actions 以保持原间距。 */
+  .yc-comment {
+    display: flex !important;
+    gap: 0.75rem !important;
+    align-items: flex-start !important;
+  }
+  .yc-comment-body {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: grid;
+    gap: 0.75rem;
+  }
+  .yc-avatar {
+    flex: 0 0 auto;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid var(--yc-border);
+    background: var(--yc-soft);
+  }
+  .yc-avatar-letter {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-weight: 700;
+    font-size: 1.1rem;
+    user-select: none;
+  }
+  /* 嵌套回复的头像略小 */
+  .yc-replies .yc-avatar {
+    width: 36px;
+    height: 36px;
+    font-size: 1rem;
+  }
 </style>
