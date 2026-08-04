@@ -2,8 +2,12 @@ name = "flygeon-memos-proxy"
 main = "memos-proxy.js"
 compatibility_date = "2025-01-01"
 
-# 只接管 /api/memos* 这些路径；其余请求仍由 GitHub Pages 静态站点处理。
+# 只接管 /api/memos* 这些路径；其余请求仍由 GitHub Pages 静态站点（经 Cloudflare 代理）处理。
 # flygeon.top 必须是在你 Cloudflare 账号下、且已接入（orange-cloud）的 zone。
+# 用对象形式显式声明 zone_name，避免 10082：
+#   "When using wildcard host ssl for saas entitlement you must specify the zone per route"
+# 若 flygeon.top 是挂在别的 zone 下的 SaaS 自定义主机，则改用 zone_id = "<父 zone 的 id>"
+# （用 `npx wrangler zones list` 查 zone id / name）。
 routes = [
-  { pattern = "flygeon.top/api/memos*" }
+  { pattern = "flygeon.top/api/memos*", zone_name = "flygeon.top" }
 ]
