@@ -4,6 +4,8 @@ published: 2026-08-04
 description: folo挺好用的一个rss阅读器
 tags:
   - folo
+  - rss
+category: 分享
 draft: false
 updated: 2026-08-04
 pinned: false
