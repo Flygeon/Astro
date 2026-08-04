@@ -38,6 +38,7 @@ export const ja: Translation = {
 	[Key.friends]: "フレンド",
 	[Key.bangumi]: "Bangumi",
 	[Key.music]: "ミュージック",
+	[Key.memos]: "メモ",
 	[Key.aigcLabel]: "コンテンツ作成方式",
 	[Key.aigcAssisted]: "AI 支援作成",
 	[Key.aigcAi]: "AI 生成",

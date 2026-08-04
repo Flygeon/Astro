@@ -1,0 +1,28 @@
+---
+import avatar from "@assets/images/avatar.png";
+import MemosList from "@components/memos/MemosList.svelte";
+import I18nKey from "@i18n/i18nKey";
+import { i18n } from "@i18n/translation";
+import MainGridLayout from "@layouts/MainGridLayout.astro";
+
+const MEMOS_SITE = "https://memos.flygeon.top";
+---
+
+<MainGridLayout title={i18n(I18nKey.memos)} description={i18n(I18nKey.memos)}>
+	<div class="flex w-full rounded-[var(--radius-large)] overflow-hidden relative min-h-32">
+		<div class="card-base z-10 px-9 py-6 relative w-full">
+			<div class="mb-6">
+				<h1 class="text-2xl font-bold mb-2 text-[var(--primary)]">我的动态</h1>
+				<div class="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+					<span>实时同步自 Memos</span>
+				</div>
+			</div>
+
+			<MemosList
+				avatarSrc={avatar.src}
+				memosSite={MEMOS_SITE}
+				client:only="svelte"
+			/>
+		</div>
+	</div>
+</MainGridLayout>

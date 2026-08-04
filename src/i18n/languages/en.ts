@@ -38,6 +38,7 @@ export const en: Translation = {
 	[Key.friends]: "Friends",
 	[Key.bangumi]: "Bangumi",
 	[Key.music]: "Music",
+	[Key.memos]: "Memos",
 	[Key.aigcLabel]: "Content creation",
 	[Key.aigcAssisted]: "AI-assisted",
 	[Key.aigcAi]: "AI-generated",

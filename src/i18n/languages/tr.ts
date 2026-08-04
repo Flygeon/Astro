@@ -38,6 +38,7 @@ export const tr: Translation = {
 	[Key.friends]: "Arkadaşlar",
 	[Key.bangumi]: "Bangumi",
 	[Key.music]: "Müzik",
+	[Key.memos]: "Memos",
 	[Key.aigcLabel]: "İçerik oluşturma",
 	[Key.aigcAssisted]: "AI destekli",
 	[Key.aigcAi]: "AI tarafından oluşturuldu",

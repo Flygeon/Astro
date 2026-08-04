@@ -38,6 +38,7 @@ export const vi: Translation = {
 	[Key.friends]: "Bạn bè",
 	[Key.bangumi]: "Bangumi",
 	[Key.music]: "Âm nhạc",
+	[Key.memos]: "Memos",
 	[Key.aigcLabel]: "Phương thức sáng tạo",
 	[Key.aigcAssisted]: "Hỗ trợ bởi AI",
 	[Key.aigcAi]: "Tạo bởi AI",

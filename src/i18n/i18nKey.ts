@@ -35,6 +35,7 @@ enum I18nKey {
 	friends = "friends",
 	bangumi = "bangumi",
 	music = "music",
+	memos = "memos",
 
 	/* AIGC content disclosure */
 	aigcLabel = "aigcLabel",

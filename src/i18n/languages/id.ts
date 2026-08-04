@@ -38,6 +38,7 @@ export const id: Translation = {
 	[Key.friends]: "Teman",
 	[Key.bangumi]: "Bangumi",
 	[Key.music]: "Musik",
+	[Key.memos]: "Memos",
 	[Key.aigcLabel]: "Cara pembuatan",
 	[Key.aigcAssisted]: "Dibantu AI",
 	[Key.aigcAi]: "Dibuat oleh AI",
