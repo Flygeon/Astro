@@ -1,0 +1,9 @@
+name = "flygeon-memos-proxy"
+main = "memos-proxy.js"
+compatibility_date = "2025-01-01"
+
+# 只接管 /api/memos* 这些路径；其余请求仍由 GitHub Pages 静态站点处理。
+# flygeon.top 必须是在你 Cloudflare 账号下、且已接入（orange-cloud）的 zone。
+routes = [
+  { pattern = "flygeon.top/api/memos*" }
+]
