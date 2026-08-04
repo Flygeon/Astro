@@ -1,11 +1,8 @@
-// functions/api/memos/index.ts
+// functions/api/memos.ts
 // Cloudflare Pages Function：代理 Memos 的公开动态。
 // Access key（MEMOS_TOKEN）只存放在服务端（Pages 环境变量），不会暴露到浏览器。
 // 前端 /memos 页面通过 GET /api/memos 实时拉取最新动态。
-// 路由由 Cloudflare Pages 自动识别。
-// 注意：项目 "Trailing slash" 设为 "Add trailing slash" 时，/api/memos 会被 308 重定向到
-// /api/memos/。本文件放在 functions/api/memos/ 目录下并以 index.ts 命名，才能同时命中
-// /api/memos 与 /api/memos/（否则 /api/memos/ 会落到 Cloudflare 的 404）。
+// 路由由 Cloudflare Pages 自动识别（仓库根目录 functions/api/memos.ts -> /api/memos）。
 
 interface MemoAttachment {
 	name: string;
