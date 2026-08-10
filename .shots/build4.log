@@ -1,0 +1,146 @@
+
+> Blog@0.0.1 build C:\blog\blog
+> astro build && pagefind --site dist
+
+17:52:49 [vite] Forced re-optimization of dependencies
+17:52:52 [content] Syncing content
+17:52:53 [content] Synced content
+17:52:53 [types] Generated 4.28s
+17:52:53 [build] output: "static"
+17:52:53 [build] mode: "static"
+17:52:53 [build] directory: C:\blog\blog\dist\
+17:52:53 [build] Collecting build info...
+17:52:53 [build] ✓ Completed in 5.87s.
+17:52:53 [build] Building static entrypoints...
+Browserslist: browsers data (caniuse-lite) is 18 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+17:53:56 [WARN] [astro-expressive-code] Error while highlighting code block using language "ymal" in document "C:\blog\blog\src\content\posts\meke-profilessite-show-post.md". The language could not be found. Using "txt" instead. Ensure that all required languages are either part of the bundle or custom languages provided in the "langs" config option.
+17:54:29 [vite] [32m✓ built in 1m 36s[39m
+17:54:29 [build] ✓ Completed in 96.53s.
+
+ building client (vite) 
+17:54:29 [vite] transforming...
+17:54:34 [vite] [32m✓[39m 248 modules transformed.
+17:54:35 [vite] rendering chunks...
+17:54:35 [vite] computing gzip size...
+17:54:35 [vite] [2mdist/[22m[32m_astro/ec.g1fg5.js                                              [39m[1m[2m  0.94 kB[22m[1m[22m
+17:54:35 [vite] [2mdist/[22m[35m_astro/Layout.DSulWsr7.css                                      [39m[1m[2m  4.42 kB[22m[1m[22m[2m │ gzip:  1.43 kB[22m
+17:54:35 [vite] [2mdist/[22m[35m_astro/_page_.DLDPuo7Y.css                                      [39m[1m[2m 12.91 kB[22m[1m[22m[2m │ gzip:  2.91 kB[22m
+17:54:35 [vite] [2mdist/[22m[35m_astro/Layout.y4KPJ9hc.css                                      [39m[1m[2m 14.04 kB[22m[1m[22m[2m │ gzip:  2.61 kB[22m
+17:54:35 [vite] [2mdist/[22m[35m_astro/ec.4fsv9.css                                             [39m[1m[2m 19.69 kB[22m[1m[22m[2m │ gzip:  4.40 kB[22m
+17:54:35 [vite] [2mdist/[22m[36m_astro/url-utils.dA2IE3vO.js                                    [39m[1m[2m  0.30 kB[22m[1m[22m[2m │ gzip:  0.21 kB[22m
+17:54:35 [vite] [2mdist/[22m[36m_astro/this.BVHl_xmf.js                                         [39m[1m[2m  0.31 kB[22m[1m[22m[2m │ gzip:  0.23 kB[22m
+17:54:35 [vite] [2mdist/[22m[36m_astro/input.DG0R-jjh.js                                        [39m[1m[2m  0.75 kB[22m[1m[22m[2m │ gzip:  0.43 kB[22m
+17:54:35 [vite] [2mdist/[22m[36m_astro/if.BgXT2pcc.js                                           [39m[1m[2m  0.79 kB[22m[1m[22m[2m │ gzip:  0.52 kB[22m
+17:54:35 [vite] [2mdist/[22m[36m_astro/translation.COsgQdyq.js                                  [39m[1m[2m  0.87 kB[22m[1m[22m[2m │ gzip:  0.54 kB[22m
+17:54:35 [vite] [2mdist/[22m[36m_astro/client.svelte.C7NQs0ij.js                                [39m[1m[2m  1.13 kB[22m[1m[22m[2m │ gzip:  0.63 kB[22m
+17:54:35 [vite] [2mdist/[22m[36m_astro/setting-utils.CQE862_m.js                                [39m[1m[2m  1.19 kB[22m[1m[22m[2m │ gzip:  0.53 kB[22m
+17:54:35 [vite] [2mdist/[22m[36m_astro/props.Chxel0zJ.js                                        [39m[1m[2m  1.71 kB[22m[1m[22m[2m │ gzip:  0.88 kB[22m
+17:54:35 [vite] [2mdist/[22m[36m_astro/ArchivePanel.CDYYZ-D9.js                                 [39m[1m[2m  3.68 kB[22m[1m[22m[2m │ gzip:  1.62 kB[22m
+17:54:35 [vite] [2mdist/[22m[36m_astro/each.C_W_gkaA.js                                         [39m[1m[2m  3.77 kB[22m[1m[22m[2m │ gzip:  1.90 kB[22m
+17:54:35 [vite] [2mdist/[22m[36m_astro/MusicPreview.BXUFvuH2.js                                 [39m[1m[2m  5.96 kB[22m[1m[22m[2m │ gzip:  2.49 kB[22m
+17:54:35 [vite] [2mdist/[22m[36m_astro/DisplaySettings.SrWMokPz.js                              [39m[1m[2m  6.24 kB[22m[1m[22m[2m │ gzip:  2.50 kB[22m
+17:54:35 [vite] [2mdist/[22m[36m_astro/musicEngine.DB19a24z.js                                  [39m[1m[2m  7.29 kB[22m[1m[22m[2m │ gzip:  2.79 kB[22m
+17:54:35 [vite] [2mdist/[22m[36m_astro/store.9m8rMzUs.js                                        [39m[1m[2m  8.80 kB[22m[1m[22m[2m │ gzip:  4.06 kB[22m
+17:54:35 [vite] [2mdist/[22m[36m_astro/zh_TW.i37yTmfe.js                                        [39m[1m[2m 10.74 kB[22m[1m[22m[2m │ gzip:  3.86 kB[22m
+17:54:35 [vite] [2mdist/[22m[36m_astro/Search.BTQcm89r.js                                       [39m[1m[2m 11.02 kB[22m[1m[22m[2m │ gzip:  4.78 kB[22m
+17:54:35 [vite] [2mdist/[22m[36m_astro/MusicPlayer.Cwhj6LRw.js                                  [39m[1m[2m 14.62 kB[22m[1m[22m[2m │ gzip:  6.00 kB[22m
+17:54:35 [vite] [2mdist/[22m[36m_astro/Layout.astro_astro_type_script_index_0_lang.ClpkTP12.js  [39m[1m[2m 17.74 kB[22m[1m[22m[2m │ gzip:  5.87 kB[22m
+17:54:35 [vite] [2mdist/[22m[36m_astro/Icon.C8v1firg.js                                         [39m[1m[2m 19.78 kB[22m[1m[22m[2m │ gzip:  7.90 kB[22m
+17:54:35 [vite] [2mdist/[22m[36m_astro/render.CqAu2S5Y.js                                       [39m[1m[2m 27.96 kB[22m[1m[22m[2m │ gzip: 11.06 kB[22m
+17:54:35 [vite] [2mdist/[22m[36m_astro/Layout.astro_astro_type_script_index_1_lang.Dg9CTWSv.js  [39m[1m[2m 31.90 kB[22m[1m[22m[2m │ gzip: 15.56 kB[22m
+17:54:35 [vite] [2mdist/[22m[36m_astro/page.C2IA8wbG.js                                         [39m[1m[2m 44.17 kB[22m[1m[22m[2m │ gzip: 13.50 kB[22m
+17:54:35 [vite] [2mdist/[22m[36m_astro/photoswipe.esm.CKV1Bsxh.js                               [39m[1m[2m 60.41 kB[22m[1m[22m[2m │ gzip: 17.48 kB[22m
+17:54:35 [vite] [2mdist/[22m[36m_astro/MemosList.5bHVtMx2.js                                    [39m[1m[2m110.71 kB[22m[1m[22m[2m │ gzip: 49.18 kB[22m
+17:54:35 [vite] [32m✓ built in 5.50s[39m
+
+ generating static routes 
+17:54:36 ▶ src/pages/about.astro
+17:54:36   └─ /about/index.html (+79ms) 
+17:54:36 ▶ src/pages/archive.astro
+17:54:36   └─ /archive/index.html (+32ms) 
+17:54:36 ▶ src/pages/bangumi.astro
+17:54:36   └─ /bangumi/index.htmlError fetching bangumi collections (subject_type=2): [DOMException [TimeoutError]: The operation was aborted due to timeout]
+ (+10.32s) 
+17:54:46 ▶ src/pages/friends.astro
+17:54:46   └─ /friends/index.html (+13ms) 
+17:54:46 ▶ src/pages/memos.astro
+17:54:46   └─ /memos/index.html (+16ms) 
+17:54:46 ▶ src/pages/music.astro
+17:54:46   └─ /music/index.html (+923ms) 
+17:54:47 λ src/pages/post.json.ts
+17:54:47   └─ /post.json (+35ms) 
+17:54:47 ▶ src/pages/posts/[...slug].astro
+17:54:47   ├─ /posts/log/index.html (+44ms) 
+17:54:47   ├─ /posts/goodbye-edge/index.html (+25ms) 
+17:54:47   ├─ /posts/filebase-and-imgbed/index.html (+21ms) 
+17:54:47   ├─ /posts/meke-profilessite-show-post/index.html (+20ms) 
+17:54:47   ├─ /posts/profile-reconstruct/index.html (+30ms) 
+17:54:47   ├─ /posts/bug/index.html (+54ms) 
+17:54:47   ├─ /posts/0721/index.html (+41ms) 
+17:54:47   ├─ /posts/flutter/index.html (+24ms) 
+17:54:47   ├─ /posts/16/index.html (+36ms) 
+17:54:47   ├─ /posts/15/index.html (+20ms) 
+17:54:47   ├─ /posts/14/index.html (+26ms) 
+17:54:47   ├─ /posts/13/index.html (+29ms) 
+17:54:47   ├─ /posts/12/index.html (+37ms) 
+17:54:48   ├─ /posts/11/index.html (+90ms) 
+17:54:48   ├─ /posts/10/index.html (+125ms) 
+17:54:48   ├─ /posts/9/index.html (+115ms) 
+17:54:48   ├─ /posts/8/index.html (+43ms) 
+17:54:48   ├─ /posts/7/index.html (+74ms) 
+17:54:48   ├─ /posts/5/index.html (+106ms) 
+17:54:48   ├─ /posts/6/index.html (+29ms) 
+17:54:48   ├─ /posts/4/index.html (+20ms) 
+17:54:48   ├─ /posts/3/index.html (+16ms) 
+17:54:48   ├─ /posts/2/index.html (+9ms) 
+17:54:48   └─ /posts/1/index.html (+10ms) 
+17:54:48 λ src/pages/robots.txt.ts
+17:54:48   └─ /robots.txt (+3ms) 
+17:54:48 λ src/pages/rss.xml.ts
+17:54:48   └─ /rss.xml (+124ms) 
+17:54:49 λ src/pages/sitemap.xml.ts
+17:54:49   └─ /sitemap.xml (+3ms) 
+17:54:49 ▶ src/pages/[...page].astro
+17:54:49   ├─ /index.html (+52ms) 
+17:54:49   ├─ /2/index.html (+139ms) 
+17:54:49   └─ /3/index.html (+130ms) 
+17:54:49 ✓ Completed in 14.04s.
+
+ generating optimized images 
+17:54:49   ▶ /_astro/banner.BkrIhJdB_ZFDyEK.webp (reused cache entry) (+10ms) (1/2)
+17:54:49   ▶ /_astro/avatar.CCT2o-B8_13KVJb.webp (reused cache entry) (+7ms) (2/2)
+17:54:49 ✓ Completed in 12ms.
+
+17:54:49 [build] 33 page(s) built in 122.26s
+17:54:49 [build] Complete!
+
+Running Pagefind v1.4.0 (Extended)
+Running from: "C:\\blog\\blog"
+Source:       "dist"
+Output:       "dist\\pagefind"
+
+[Walking source directory]
+Found 34 files matching **/*.{html}
+
+[Parsing files]
+Found a data-pagefind-body element on the site.
+↳ Ignoring pages without this tag.
+
+[Reading languages]
+Discovered 1 language: zh-cn
+
+[Building search indexes]
+Total: 
+  Indexed 1 language
+  Indexed 26 pages
+  Indexed 3011 words
+  Indexed 0 filters
+  Indexed 0 sorts
+Note: Pagefind doesn't support stemming for the language zh-cn. 
+Search will still work, but will not match across root words.
+Note: Pagefind doesn't support stemming for the language zh-cn. 
+Search will still work, but will not match across root words.
+
+Finished in 5.104 seconds

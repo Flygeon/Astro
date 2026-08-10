@@ -1,7 +1,7 @@
 @echo off
-set /p commit_msg=请输入commit原因: 
+set /p commit_msg=璇疯緭鍏ommit鍘熷洜: 
 git add .
 git commit -m "%commit_msg%"
 git push origin master:main
-echo 提交完成~
+echo 鎻愪氦瀹屾垚~
 pause

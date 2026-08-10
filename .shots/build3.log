@@ -1,0 +1,24 @@
+17:50:17 [vite] Forced re-optimization of dependencies
+17:50:21 [content] Syncing content
+17:50:21 [content] Synced content
+17:50:21 [types] Generated 3.97s
+17:50:21 [build] output: "static"
+17:50:21 [build] mode: "static"
+17:50:21 [build] directory: C:\blog\blog\dist\
+17:50:21 [build] Collecting build info...
+17:50:21 [build] ✓ Completed in 4.62s.
+17:50:21 [build] Building static entrypoints...
+Browserslist: browsers data (caniuse-lite) is 18 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+17:50:31 [ERROR] [vite] [31m✗[39m Build failed in 9.82s
+[vite:css] [postcss] C:/blog/blog/src/styles/markdown.css:23:9: The `link` class does not exist. If `link` is a custom class, make sure it is defined within a `@layer` directive.
+file: C:/blog/blog/src/styles/markdown.css:23:8
+  Location:
+    C:/blog/blog/src/styles/markdown.css:23:8
+  Stack trace:
+    at Input.error (C:\blog\Blog\node_modules\.pnpm\postcss@8.5.6\node_modules\postcss\lib\input.js:135:16)
+    at processApply (C:\blog\Blog\node_modules\.pnpm\tailwindcss@3.4.19_yaml@2.8.2\node_modules\tailwindcss\lib\lib\expandApplyAtRules.js:380:29)
+    at C:\blog\Blog\node_modules\.pnpm\tailwindcss@3.4.19_yaml@2.8.2\node_modules\tailwindcss\lib\processTailwindFeatures.js:55:50
+    at async LazyResult.runAsync (C:\blog\Blog\node_modules\.pnpm\postcss@8.5.6\node_modules\postcss\lib\lazy-result.js:293:11)
+    at async compilePostCSS (file:///C:/blog/Blog/node_modules/.pnpm/vite@6.3.6_@types+node@24.5.2_jiti@1.21.7_lightningcss@1.29.3_sass@1.80.4_stylus@0.64.0_terser@5.43.1_yaml@2.8.2/node_modules/vite/dist/node/chunks/dep-Bu492Fnd.js:43812:18)

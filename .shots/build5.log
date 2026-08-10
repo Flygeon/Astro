@@ -1,0 +1,16 @@
+[2m下午6:16:06[22m [31m[1m[vite][22m[39m [31m[2m(ssr)[22m[39m [31mError when evaluating SSR module C:\blog\blog\astro.config.mjs: The service was stopped[39m
+  Plugin: [35mvite:esbuild[39m
+  File: [36mC:/blog/blog/src/config.ts[39m
+      at C:\blog\Blog\node_modules\.pnpm\esbuild@0.25.10\node_modules\esbuild\lib\main.js:718:38
+      at responseCallbacks.<computed> (C:\blog\Blog\node_modules\.pnpm\esbuild@0.25.10\node_modules\esbuild\lib\main.js:603:9)
+      at Socket.afterClose (C:\blog\Blog\node_modules\.pnpm\esbuild@0.25.10\node_modules\esbuild\lib\main.js:594:28)
+      at Socket.emit (node:events:521:24)
+      at endReadableNT (node:internal/streams/readable:1729:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+[astro] Unable to load your Astro config
+
+The service was stopped
+  Stack trace:
+    at C:\blog\Blog\node_modules\.pnpm\esbuild@0.25.10\node_modules\esbuild\lib\main.js:718:38
+    at Socket.afterClose (C:\blog\Blog\node_modules\.pnpm\esbuild@0.25.10\node_modules\esbuild\lib\main.js:594:28)
+    at endReadableNT (node:internal/streams/readable:1729:12)

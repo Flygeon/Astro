@@ -1,0 +1,113 @@
+18:21:47 [vite] Re-optimizing dependencies because vite config has changed
+18:21:49 [content] Syncing content
+18:21:49 [content] Synced content
+18:21:49 [types] Generated 2.51s
+18:21:49 [build] output: "static"
+18:21:49 [build] mode: "static"
+18:21:49 [build] directory: C:\blog\blog\dist\
+18:21:49 [build] Collecting build info...
+18:21:49 [build] ✓ Completed in 2.89s.
+18:21:49 [build] Building static entrypoints...
+Browserslist: browsers data (caniuse-lite) is 18 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+18:22:20 [WARN] [astro-expressive-code] Error while highlighting code block using language "ymal" in document "C:\blog\blog\src\content\posts\meke-profilessite-show-post.md". The language could not be found. Using "txt" instead. Ensure that all required languages are either part of the bundle or custom languages provided in the "langs" config option.
+18:22:31 [vite] [32m✓ built in 41.01s[39m
+18:22:31 [build] ✓ Completed in 41.53s.
+
+ building client (vite) 
+18:22:31 [vite] transforming...
+18:22:40 [vite] [32m✓[39m 248 modules transformed.
+18:22:40 [vite] rendering chunks...
+18:22:40 [vite] computing gzip size...
+18:22:40 [vite] [2mdist/[22m[32m_astro/ec.g1fg5.js                                              [39m[1m[2m  0.94 kB[22m[1m[22m
+18:22:40 [vite] [2mdist/[22m[35m_astro/Layout.DSulWsr7.css                                      [39m[1m[2m  4.42 kB[22m[1m[22m[2m │ gzip:  1.43 kB[22m
+18:22:40 [vite] [2mdist/[22m[35m_astro/_page_.DLDPuo7Y.css                                      [39m[1m[2m 12.91 kB[22m[1m[22m[2m │ gzip:  2.91 kB[22m
+18:22:40 [vite] [2mdist/[22m[35m_astro/Layout.y4KPJ9hc.css                                      [39m[1m[2m 14.04 kB[22m[1m[22m[2m │ gzip:  2.61 kB[22m
+18:22:40 [vite] [2mdist/[22m[35m_astro/ec.4fsv9.css                                             [39m[1m[2m 19.69 kB[22m[1m[22m[2m │ gzip:  4.40 kB[22m
+18:22:40 [vite] [2mdist/[22m[36m_astro/url-utils.dA2IE3vO.js                                    [39m[1m[2m  0.30 kB[22m[1m[22m[2m │ gzip:  0.21 kB[22m
+18:22:40 [vite] [2mdist/[22m[36m_astro/this.BVHl_xmf.js                                         [39m[1m[2m  0.31 kB[22m[1m[22m[2m │ gzip:  0.23 kB[22m
+18:22:40 [vite] [2mdist/[22m[36m_astro/input.DG0R-jjh.js                                        [39m[1m[2m  0.75 kB[22m[1m[22m[2m │ gzip:  0.43 kB[22m
+18:22:40 [vite] [2mdist/[22m[36m_astro/if.BgXT2pcc.js                                           [39m[1m[2m  0.79 kB[22m[1m[22m[2m │ gzip:  0.52 kB[22m
+18:22:40 [vite] [2mdist/[22m[36m_astro/translation.COsgQdyq.js                                  [39m[1m[2m  0.87 kB[22m[1m[22m[2m │ gzip:  0.54 kB[22m
+18:22:40 [vite] [2mdist/[22m[36m_astro/client.svelte.C7NQs0ij.js                                [39m[1m[2m  1.13 kB[22m[1m[22m[2m │ gzip:  0.63 kB[22m
+18:22:40 [vite] [2mdist/[22m[36m_astro/setting-utils.CQE862_m.js                                [39m[1m[2m  1.19 kB[22m[1m[22m[2m │ gzip:  0.53 kB[22m
+18:22:40 [vite] [2mdist/[22m[36m_astro/props.Chxel0zJ.js                                        [39m[1m[2m  1.71 kB[22m[1m[22m[2m │ gzip:  0.88 kB[22m
+18:22:40 [vite] [2mdist/[22m[36m_astro/ArchivePanel.CDYYZ-D9.js                                 [39m[1m[2m  3.68 kB[22m[1m[22m[2m │ gzip:  1.62 kB[22m
+18:22:40 [vite] [2mdist/[22m[36m_astro/each.C_W_gkaA.js                                         [39m[1m[2m  3.77 kB[22m[1m[22m[2m │ gzip:  1.90 kB[22m
+18:22:40 [vite] [2mdist/[22m[36m_astro/MusicPreview.BXUFvuH2.js                                 [39m[1m[2m  5.96 kB[22m[1m[22m[2m │ gzip:  2.49 kB[22m
+18:22:40 [vite] [2mdist/[22m[36m_astro/DisplaySettings.SrWMokPz.js                              [39m[1m[2m  6.24 kB[22m[1m[22m[2m │ gzip:  2.50 kB[22m
+18:22:40 [vite] [2mdist/[22m[36m_astro/musicEngine.DB19a24z.js                                  [39m[1m[2m  7.29 kB[22m[1m[22m[2m │ gzip:  2.79 kB[22m
+18:22:40 [vite] [2mdist/[22m[36m_astro/store.9m8rMzUs.js                                        [39m[1m[2m  8.80 kB[22m[1m[22m[2m │ gzip:  4.06 kB[22m
+18:22:41 [vite] [2mdist/[22m[36m_astro/zh_TW.i37yTmfe.js                                        [39m[1m[2m 10.74 kB[22m[1m[22m[2m │ gzip:  3.86 kB[22m
+18:22:41 [vite] [2mdist/[22m[36m_astro/Search.BTQcm89r.js                                       [39m[1m[2m 11.02 kB[22m[1m[22m[2m │ gzip:  4.78 kB[22m
+18:22:41 [vite] [2mdist/[22m[36m_astro/MusicPlayer.Cwhj6LRw.js                                  [39m[1m[2m 14.62 kB[22m[1m[22m[2m │ gzip:  6.00 kB[22m
+18:22:41 [vite] [2mdist/[22m[36m_astro/Layout.astro_astro_type_script_index_0_lang.ClpkTP12.js  [39m[1m[2m 17.74 kB[22m[1m[22m[2m │ gzip:  5.87 kB[22m
+18:22:41 [vite] [2mdist/[22m[36m_astro/Icon.C8v1firg.js                                         [39m[1m[2m 19.78 kB[22m[1m[22m[2m │ gzip:  7.90 kB[22m
+18:22:41 [vite] [2mdist/[22m[36m_astro/render.CqAu2S5Y.js                                       [39m[1m[2m 27.96 kB[22m[1m[22m[2m │ gzip: 11.06 kB[22m
+18:22:41 [vite] [2mdist/[22m[36m_astro/Layout.astro_astro_type_script_index_1_lang.Dg9CTWSv.js  [39m[1m[2m 31.90 kB[22m[1m[22m[2m │ gzip: 15.56 kB[22m
+18:22:41 [vite] [2mdist/[22m[36m_astro/page.C2IA8wbG.js                                         [39m[1m[2m 44.17 kB[22m[1m[22m[2m │ gzip: 13.50 kB[22m
+18:22:41 [vite] [2mdist/[22m[36m_astro/photoswipe.esm.CKV1Bsxh.js                               [39m[1m[2m 60.41 kB[22m[1m[22m[2m │ gzip: 17.48 kB[22m
+18:22:41 [vite] [2mdist/[22m[36m_astro/MemosList.5bHVtMx2.js                                    [39m[1m[2m110.71 kB[22m[1m[22m[2m │ gzip: 49.18 kB[22m
+18:22:41 [vite] [32m✓ built in 9.43s[39m
+
+ generating static routes 
+18:22:41 ▶ src/pages/about.astro
+18:22:41   └─ /about/index.html (+201ms) 
+18:22:42 ▶ src/pages/archive.astro
+18:22:42   └─ /archive/index.html (+51ms) 
+18:22:42 ▶ src/pages/bangumi.astro
+18:22:42   └─ /bangumi/index.htmlError fetching bangumi collections (subject_type=2): [DOMException [TimeoutError]: The operation was aborted due to timeout]
+ (+10.10s) 
+18:22:52 ▶ src/pages/friends.astro
+18:22:52   └─ /friends/index.html (+19ms) 
+18:22:52 ▶ src/pages/memos.astro
+18:22:52   └─ /memos/index.html (+20ms) 
+18:22:52 ▶ src/pages/music.astro
+18:22:52   └─ /music/index.html (+929ms) 
+18:22:53 λ src/pages/post.json.ts
+18:22:53   └─ /post.json (+16ms) 
+18:22:53 ▶ src/pages/posts/[...slug].astro
+18:22:53   ├─ /posts/log/index.html (+45ms) 
+18:22:53   ├─ /posts/goodbye-edge/index.html (+31ms) 
+18:22:53   ├─ /posts/filebase-and-imgbed/index.html (+35ms) 
+18:22:53   ├─ /posts/meke-profilessite-show-post/index.html (+33ms) 
+18:22:53   ├─ /posts/profile-reconstruct/index.html (+22ms) 
+18:22:53   ├─ /posts/bug/index.html (+43ms) 
+18:22:53   ├─ /posts/0721/index.html (+48ms) 
+18:22:53   ├─ /posts/flutter/index.html (+39ms) 
+18:22:53   ├─ /posts/16/index.html (+40ms) 
+18:22:53   ├─ /posts/15/index.html (+26ms) 
+18:22:53   ├─ /posts/14/index.html (+24ms) 
+18:22:53   ├─ /posts/13/index.html (+30ms) 
+18:22:53   ├─ /posts/12/index.html (+39ms) 
+18:22:53   ├─ /posts/11/index.html (+23ms) 
+18:22:53   ├─ /posts/10/index.html (+26ms) 
+18:22:53   ├─ /posts/9/index.html (+20ms) 
+18:22:53   ├─ /posts/8/index.html (+29ms) 
+18:22:53   ├─ /posts/7/index.html (+23ms) 
+18:22:53   ├─ /posts/5/index.html (+20ms) 
+18:22:53   ├─ /posts/6/index.html (+13ms) 
+18:22:53   ├─ /posts/4/index.html (+16ms) 
+18:22:53   ├─ /posts/3/index.html (+16ms) 
+18:22:53   ├─ /posts/2/index.html (+16ms) 
+18:22:53   └─ /posts/1/index.html (+13ms) 
+18:22:54 λ src/pages/robots.txt.ts
+18:22:54   └─ /robots.txt (+2ms) 
+18:22:54 λ src/pages/rss.xml.ts
+18:22:54   └─ /rss.xml (+121ms) 
+18:22:54 λ src/pages/sitemap.xml.ts
+18:22:54   └─ /sitemap.xml (+5ms) 
+18:22:54 ▶ src/pages/[...page].astro
+18:22:54   ├─ /index.html (+22ms) 
+18:22:54   ├─ /2/index.html (+22ms) 
+18:22:54   └─ /3/index.html (+20ms) 
+18:22:54 ✓ Completed in 13.35s.
+
+ generating optimized images 
+18:22:54   ▶ /_astro/avatar.CCT2o-B8_13KVJb.webp (reused cache entry) (+4ms) (1/2)
+18:22:54   ▶ /_astro/banner.BkrIhJdB_ZFDyEK.webp (reused cache entry) (+5ms) (2/2)
+18:22:54 ✓ Completed in 6ms.
+
+18:22:54 [build] 33 page(s) built in 67.61s
+18:22:54 [build] Complete!

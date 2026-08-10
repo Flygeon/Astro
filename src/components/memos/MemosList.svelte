@@ -41,6 +41,7 @@ let refreshing = false;
 let error = "";
 let lastUpdated: Date | null = null;
 let timer: ReturnType<typeof setInterval>;
+let selectedYear = "";
 
 // 与文章日期一致：按 UTC 渲染，避免时区影响
 function formatTime(iso: string): string {
@@ -63,6 +64,16 @@ function memoUrl(name: string): string {
 function imageAttachments(m: Memo): MemoAttachment[] {
 	return m.attachments.filter((a) => a.type.startsWith("image"));
 }
+
+// 从 memos 提取可用年份（降序）
+$: years = [...new Set(memos.map((m) => new Date(m.createTime).getUTCFullYear()))].sort(
+	(a, b) => b - a,
+);
+
+// 按年份过滤后的 memos
+$: filteredMemos = selectedYear
+	? memos.filter((m) => new Date(m.createTime).getUTCFullYear() === Number(selectedYear))
+	: memos;
 
 async function load() {
 	refreshing = true;
@@ -107,13 +118,35 @@ onDestroy(() => {
 });
 </script>
 
-<!-- 工具栏：计数 + 更新时间 + 手动刷新 + 原文站点 -->
-<div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-gray-500 dark:text-gray-400 mb-5">
-	<span>共 {memos.length} 条动态</span>
-	{#if lastUpdated}
-		<span class="text-gray-300 dark:text-gray-600">|</span>
-		<span>更新于 {formatClock(lastUpdated)}</span>
-	{/if}
+<!-- Header 卡片：标题 + 副标题 + 计数 + 年份筛选 -->
+<header class="card-base rounded-[var(--radius-large)] px-6 py-5 mb-4">
+	<div class="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-3 sm:gap-4 items-center">
+		<div class="min-w-0">
+			<h1 class="text-2xl font-bold text-[var(--primary)] leading-tight">动态</h1>
+			<p class="text-sm text-[var(--content-muted)] mt-1">随手记下此刻的想法与日常。</p>
+			<div class="text-xs text-[var(--content-muted)] mt-2">
+				{filteredMemos.length} 动态
+			</div>
+		</div>
+		<div class="flex items-center gap-2 sm:justify-end">
+			{#if years.length > 0}
+				<select
+					bind:value={selectedYear}
+					class="text-sm rounded-lg border-none bg-[var(--btn-plain-bg-hover)] text-[var(--content-text)] px-3 py-1.5 cursor-pointer outline-none transition hover:opacity-80 focus:opacity-80"
+					aria-label="按年份筛选"
+				>
+					<option value="">全部年份</option>
+					{#each years as year}
+						<option value={year}>{year}</option>
+					{/each}
+				</select>
+			{/if}
+		</div>
+	</div>
+</header>
+
+<!-- 工具栏：刷新 + 更新时间 -->
+<div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-[var(--content-muted)] mb-4">
 	<button
 		type="button"
 		on:click={load}
@@ -126,14 +159,10 @@ onDestroy(() => {
 		/>
 		刷新
 	</button>
-	<a
-		href={memosSite}
-		target="_blank"
-		rel="noopener noreferrer"
-		class="text-[var(--primary)] hover:underline ml-auto"
-	>
-		memos.flygeon.top
-	</a>
+	{#if lastUpdated}
+		<span class="text-[var(--meta-divider)]">|</span>
+		<span class="text-xs">更新于 {formatClock(lastUpdated)}</span>
+	{/if}
 </div>
 
 {#if error && memos.length > 0}
@@ -176,18 +205,18 @@ onDestroy(() => {
 			重试
 		</button>
 	</div>
-{:else if memos.length === 0}
+{:else if filteredMemos.length === 0}
 	<!-- 空态 -->
 	<div class="flex flex-col items-center justify-center gap-3 py-16 text-gray-400 dark:text-gray-500">
 		<Icon
 			class="text-5xl opacity-60"
 			icon="material-symbols:feed-outline-rounded"
 		/>
-		<span class="text-sm">暂无动态</span>
+		<span class="text-sm">{selectedYear ? `${selectedYear} 年暂无动态` : "暂无动态"}</span>
 	</div>
 {:else}
 	<ul class="flex flex-col gap-4">
-		{#each memos as m}
+		{#each filteredMemos as m}
 			<li class="card-base rounded-[var(--radius-large)] p-5 sm:p-6">
 				<div class="flex items-start gap-3 sm:gap-4">
 					<img
@@ -241,13 +270,30 @@ onDestroy(() => {
 										href={a.externalLink}
 										target="_blank"
 										rel="noopener noreferrer"
-										class="overflow-hidden rounded-lg block"
+										class="overflow-hidden rounded-lg block relative bg-zinc-200 dark:bg-zinc-700 animate-pulse"
 									>
 										<img
 											src={a.externalLink}
 											alt={a.filename}
 											loading="lazy"
-											class="w-full h-auto max-h-80 object-cover hover:scale-105 transition duration-300"
+											class="w-full h-auto max-h-80 object-cover hover:scale-105 transition duration-300 opacity-0"
+											on:load={(e) => {
+												const img = e.currentTarget as HTMLImageElement;
+												img.style.opacity = "1";
+												const parent = img.parentElement;
+												if (parent) {
+													parent.classList.remove("animate-pulse", "bg-zinc-200", "dark:bg-zinc-700");
+												}
+											}}
+											on:error={(e) => {
+												const img = e.currentTarget as HTMLImageElement;
+												const parent = img.parentElement;
+												if (parent) {
+													parent.classList.remove("animate-pulse", "bg-zinc-200", "dark:bg-zinc-700");
+													parent.classList.add("flex", "items-center", "justify-center", "min-h-32");
+													parent.innerHTML = '<span class="text-xs text-gray-400">图片加载失败</span>';
+												}
+											}}
 										/>
 									</a>
 								{/each}

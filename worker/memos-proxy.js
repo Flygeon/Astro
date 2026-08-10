@@ -1,12 +1,5 @@
 // worker/memos-proxy.js
 // Cloudflare Worker：代理 Memos 的公开动态。
-//
-// 背景：本仓库通过 .github/workflows/deploy.yml 部署到 GitHub Pages（纯静态托管），
-// GitHub Pages 无法运行 Cloudflare Pages Functions，所以仓库根目录的 functions/api/memos/
-// 永远不会被执行，导致前端 /api/memos 404。
-// 由于 flygeon.top 本身在 Cloudflare 边缘网络下，最稳妥的做法是用一个 Cloudflare Worker
-// 在边缘拦截 /api/memos* 请求并代理到 memos.flygeon.top，token 只存在 Worker 的环境变量里。
-//
 // 部署步骤（需要你自己的 Cloudflare 账号凭证）：
 //   1. cd worker
 //   2. npx wrangler login            # 或在环境变量里配置 CF_API_TOKEN
